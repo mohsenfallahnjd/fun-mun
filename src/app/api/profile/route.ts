@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { syncProfileFromClerk } from "@/lib/auth";
+import { getSessionProfile } from "@/lib/auth";
 import { listUserItems } from "@/lib/items-service";
 
 function dbUnavailable() {
@@ -10,7 +10,7 @@ export async function GET() {
   if (!process.env.DATABASE_URL) return dbUnavailable();
 
   try {
-    const profile = await syncProfileFromClerk();
+    const profile = await getSessionProfile();
     const items = await listUserItems();
     return NextResponse.json({
       profile: {

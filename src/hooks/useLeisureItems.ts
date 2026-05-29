@@ -1,7 +1,7 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
 import { nanoid } from "nanoid";
+import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
 import { reorderItems as applyReorder } from "@/lib/sort";
 import { loadItems, saveItems } from "@/lib/storage";
@@ -25,7 +25,9 @@ async function saveCloudItems(items: LeisureItem[]): Promise<boolean> {
 }
 
 export function useLeisureItems() {
-  const { isSignedIn, isLoaded } = useUser();
+  const { status } = useSession();
+  const isSignedIn = status === "authenticated";
+  const isLoaded = status !== "loading";
   const [items, setItems] = useState<LeisureItem[]>([]);
   const [ready, setReady] = useState(false);
   const [syncing, setSyncing] = useState(false);

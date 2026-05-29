@@ -1,6 +1,6 @@
-import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata, Viewport } from "next";
 import { SerwistProvider } from "@/components/SerwistProvider";
+import { SessionProvider } from "@/components/SessionProvider";
 import "./globals.css";
 
 const APP_NAME = "Fun Mun";
@@ -41,12 +41,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en" className="h-full antialiased">
-        <body className="min-h-full flex flex-col bg-background text-foreground">
+    <html lang="en" className="h-full antialiased">
+      <body className="min-h-full flex flex-col bg-background text-foreground">
+        <SessionProvider>
           <SerwistProvider swUrl="/serwist/sw.js">{children}</SerwistProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+        </SessionProvider>
+      </body>
+    </html>
   );
 }

@@ -1,8 +1,8 @@
 "use client";
 
-import { UserButton, useUser } from "@clerk/nextjs";
+import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { Cloud, Loader2 } from "@/components/icons";
+import { Cloud, Loader2, LogOut } from "@/components/icons";
 import { Link } from "@/components/Link";
 import { clearItems, loadItems } from "@/lib/storage";
 
@@ -13,7 +13,9 @@ interface ProfileInfo {
 }
 
 export function ProfileBar() {
-  const { isSignedIn, isLoaded } = useUser();
+  const { data: session, status } = useSession();
+  const isSignedIn = status === "authenticated";
+  const isLoaded = status !== "loading";
   const [profile, setProfile] = useState<ProfileInfo | null>(null);
   const [migrating, setMigrating] = useState(false);
   const [localCount, setLocalCount] = useState(0);
@@ -84,14 +86,24 @@ export function ProfileBar() {
     );
   }
 
+  const displayName = profile?.name ?? session?.user?.name ?? "Your profile";
+
   return (
     <div className="flex flex-col items-end gap-2">
       <div className="flex items-center gap-3">
         <div className="hidden text-right sm:block">
-          <p className="text-sm font-medium leading-tight">{profile?.name ?? "Your profile"}</p>
+          <p className="text-sm font-medium leading-tight">{displayName}</p>
           <p className="text-xs text-muted">{profile?.itemCount ?? 0} items · saved to cloud</p>
         </div>
-        <UserButton />
+        <button
+          type="button"
+          onClick={() => signOut({ callbackUrl: "/" })}
+          className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-surface px-3 py-1.5 text-sm font-medium hover:bg-muted/40"
+          title="Sign out"
+        >
+          <LogOut className="h-4 w-4" />
+          <span className="hidden sm:inline">Sign out</span>
+        </button>
       </div>
 
       {localCount > 0 && (

@@ -10,6 +10,7 @@ export {
   GripVertical,
   Headphones,
   Loader2,
+  LogOut,
   MapPin,
   Mic,
   Pencil,

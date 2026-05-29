@@ -17,19 +17,21 @@ A simple, modern bookmarker for your free time: books, audiobooks, podcasts, mov
 ```bash
 bun install
 cp .env.example .env.local
-# Fill in Clerk + DATABASE_URL (see below)
+# Fill in AUTH_SECRET + DATABASE_URL (see below)
 bun run db:push
 bun run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-### Auth (Clerk)
+### Auth (Auth.js)
 
-1. Create an app at [clerk.com](https://clerk.com) or add **Clerk** from the [Vercel Marketplace](https://vercel.com/marketplace/clerk)
+1. Generate a secret: `openssl rand -base64 32`
 2. Add to `.env.local`:
-   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
-   - `CLERK_SECRET_KEY`
+   - `AUTH_SECRET` — random string from step 1
+   - `AUTH_URL` — `http://localhost:3000` (use your production URL on Vercel)
+
+Sign up with email and password at `/sign-up`. No third-party auth provider required.
 
 ### Database (Neon Postgres)
 
@@ -50,16 +52,17 @@ Set `TMDB_API_KEY` for richer movie posters (Wikipedia fallback works without it
 ## Deploy on Vercel
 
 1. Push to GitHub and import in [Vercel](https://vercel.com/new)
-2. Add **Clerk** and **Neon** integrations (or set env vars manually)
-3. Run `bun run db:push` against production `DATABASE_URL` once
-4. Deploy
+2. Add **Neon** integration (or set `DATABASE_URL` manually)
+3. Set `AUTH_SECRET` and `AUTH_URL` (your production domain)
+4. Run `bun run db:push` against production `DATABASE_URL` once
+5. Deploy
 
 **Guest mode:** Without signing in, data stays in browser localStorage. After sign-in, use **Import local items** to move it to your profile.
 
 ## Stack
 
 - Next.js 16 · Tailwind CSS 4 · Bun · Biome
-- Clerk (auth) · Neon Postgres · Drizzle ORM
+- Auth.js (NextAuth) · Neon Postgres · Drizzle ORM
 
 ## Scripts
 
