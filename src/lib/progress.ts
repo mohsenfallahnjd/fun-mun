@@ -23,6 +23,9 @@ export function formatProgress(item: LeisureItem): string | null {
       if (p.season != null && p.episode != null) return `S${p.season} E${p.episode}`;
       if (p.episode != null) return `Ep. ${p.episode}`;
       return null;
+    case "game":
+      if (p.hoursPlayed != null) return `${p.hoursPlayed}h played`;
+      return null;
     default:
       return null;
   }
@@ -32,11 +35,13 @@ export function progressFieldsForType(type: LeisureType): {
   pages: boolean;
   time: boolean;
   episode: boolean;
+  hours: boolean;
 } {
   return {
     pages: type === "book" || type === "audiobook",
     time: type === "movie",
     episode: type === "series" || type === "podcast",
+    hours: type === "game",
   };
 }
 
@@ -48,5 +53,12 @@ export function parseOptionalInt(value: string): number | undefined {
   const trimmed = value.trim();
   if (!trimmed) return undefined;
   const n = Number.parseInt(trimmed, 10);
+  return Number.isNaN(n) || n < 0 ? undefined : n;
+}
+
+export function parseOptionalFloat(value: string): number | undefined {
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  const n = Number.parseFloat(trimmed);
   return Number.isNaN(n) || n < 0 ? undefined : n;
 }

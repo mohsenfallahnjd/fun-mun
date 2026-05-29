@@ -10,7 +10,12 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
-    "db:push": "drizzle-kit push",
+    "db:push": "echo '⚠️  db:push can drop data. Prefer: bun run db:migrate' && drizzle-kit push",
+    "db:migrate": "bun scripts/migrate.ts",
+    "db:migrate:theme": "bun scripts/migrate-theme.ts",
+    "db:migrate:rating": "bun scripts/migrate-rating.ts",
+    "db:migrate:original-title": "bun scripts/migrate-original-title.ts",
+    "db:migrate:social": "bun scripts/migrate-social.ts",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {

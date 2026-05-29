@@ -1,18 +1,16 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { FilterBar } from "@/components/FilterBar";
+import { useEffect, useMemo, useState } from "react";
 import type { ItemDraft } from "@/components/ItemForm";
 import { ItemForm } from "@/components/ItemForm";
-import { Bookmark, Download, Plus, Upload } from "@/components/icons";
+import { Bookmark, Plus } from "@/components/icons";
 import { LeisureCard } from "@/components/LeisureCard";
-import { ProfileBar } from "@/components/ProfileBar";
-import { SortBar } from "@/components/SortBar";
+import { ListToolbar } from "@/components/ListToolbar";
+import { AppHeader } from "@/components/SiteNav";
 import { SuggestionPanel } from "@/components/SuggestionPanel";
 import { useLeisureItems } from "@/hooks/useLeisureItems";
 import { loadSortMode, type SortMode, saveSortMode, sortItems } from "@/lib/sort";
-import { exportItems, importItems } from "@/lib/storage";
-import type { LeisureItem, LeisureType } from "@/lib/types";
+import { emptyTypeCounts, type LeisureItem, type LeisureType } from "@/lib/types";
 
 export function LeisureApp() {
   const {
@@ -26,7 +24,6 @@ export function LeisureApp() {
     removeItem,
     setStatus,
     reorderItems,
-    replaceAll,
   } = useLeisureItems();
   const [filter, setFilter] = useState<LeisureType | "all">("all");
   const [sortMode, setSortMode] = useState<SortMode>("manual");
@@ -34,7 +31,6 @@ export function LeisureApp() {
   const [editingItem, setEditingItem] = useState<LeisureItem | null>(null);
   const [dragId, setDragId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setSortMode(loadSortMode());
@@ -53,15 +49,8 @@ export function LeisureApp() {
   }, [sorted, filter]);
 
   const counts = useMemo(() => {
-    const c: Record<LeisureType | "all", number> = {
-      all: items.length,
-      book: 0,
-      audiobook: 0,
-      podcast: 0,
-      movie: 0,
-      series: 0,
-      place: 0,
-    };
+    const c = emptyTypeCounts();
+    c.all = items.length;
     for (const item of items) c[item.type]++;
     return c;
   }, [items]);
@@ -74,32 +63,6 @@ export function LeisureApp() {
     }
     setDragId(null);
     setDragOverId(null);
-  };
-
-  const handleExport = () => {
-    const blob = new Blob([exportItems(items)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "fun-mun-leisure.json";
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const next = importItems(reader.result as string);
-        replaceAll(next);
-      } catch {
-        alert("Invalid JSON file");
-      }
-    };
-    reader.readAsText(file);
-    e.target.value = "";
   };
 
   const handleSave = (draft: ItemDraft) => {
@@ -121,121 +84,124 @@ export function LeisureApp() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6">
-      <header className="flex items-start justify-between gap-4">
-        <div>
-          <div className="mb-2 flex items-center gap-2 text-accent">
-            <Bookmark className="h-5 w-5" />
-            <span className="text-sm font-semibold uppercase tracking-wider">Fun Mun</span>
-          </div>
-          <h1 className="text-3xl font-bold tracking-tight">Leisure time</h1>
-          <p className="mt-1 text-muted">
-            Books, shows, podcasts & places — bookmarked for when you need a break.
-          </p>
-        </div>
+    <>
+      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-5 px-4 py-5 sm:gap-8 sm:px-6 sm:py-8">
+        <header className="flex flex-col gap-3 sm:gap-4">
+          <AppHeader />
 
-        <div className="flex shrink-0 flex-col items-end gap-2 sm:flex-row sm:items-start">
-          <ProfileBar />
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={handleExport}
-              title="Export backup"
-              className="rounded-xl border border-border p-2.5 text-muted transition-colors hover:bg-muted/60 hover:text-foreground"
-            >
-              <Download className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              title="Import backup"
-              className="rounded-xl border border-border p-2.5 text-muted transition-colors hover:bg-muted/60 hover:text-foreground"
-            >
-              <Upload className="h-4 w-4" />
-            </button>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="application/json"
-              className="hidden"
-              onChange={handleImport}
-            />
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <div className="mb-1 flex items-center gap-2 text-accent sm:mb-2">
+                <Bookmark className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="text-xs font-semibold uppercase tracking-wider sm:text-sm">
+                  Fun Mun
+                </span>
+              </div>
+              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Leisure time</h1>
+              <p className="mt-1 hidden text-sm text-muted sm:block">
+                Books, shows, games, podcasts & places — bookmarked for when you need a break.
+              </p>
+            </div>
+
             <button
               type="button"
               onClick={() => setShowAdd(true)}
-              className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground shadow-sm transition-all hover:brightness-110"
+              className="hidden shrink-0 items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground shadow-sm transition-all hover:brightness-110 sm:inline-flex"
             >
               <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">Add</span>
+              Add
             </button>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {isSignedIn && cloudEnabled && (
-        <p className="-mt-4 text-xs text-muted">
-          {syncing ? "Saving to your profile…" : "Synced to your profile"}
-        </p>
-      )}
-
-      {!isSignedIn && (
-        <p className="-mt-4 rounded-xl border border-border bg-surface/80 px-4 py-2 text-sm text-muted">
-          Sign in to save your list to the cloud. Guest data stays in this browser only.
-        </p>
-      )}
-
-      <SuggestionPanel
-        items={items}
-        filterType={filter}
-        onStart={(id) => setStatus(id, "active")}
-      />
-
-      <section>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <FilterBar active={filter} onChange={setFilter} counts={counts} />
-          <SortBar value={sortMode} onChange={handleSortChange} manualHint={canDrag} />
-        </div>
-
-        {sortMode === "manual" && filter !== "all" && (
-          <p className="mt-2 text-xs text-muted">
-            Switch to <strong>All</strong> to drag and reorder items.
+        {isSignedIn && cloudEnabled && (
+          <p className="-mt-2 text-xs text-muted sm:-mt-4">
+            {syncing ? "Saving to your profile…" : "Synced to your profile"}
           </p>
         )}
 
-        <div className="mt-4 flex flex-col gap-3">
-          {filtered.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-border py-16 text-center">
-              <p className="text-muted">Nothing here yet.</p>
-              <button
-                type="button"
-                onClick={() => setShowAdd(true)}
-                className="mt-3 text-sm font-medium text-accent hover:underline"
-              >
-                Add your first item
-              </button>
-            </div>
-          ) : (
-            filtered.map((item) => (
-              <LeisureCard
-                key={item.id}
-                item={item}
-                draggable={canDrag}
-                isDragOver={dragOverId === item.id && dragId !== item.id}
-                onStatusChange={setStatus}
-                onEdit={setEditingItem}
-                onRemove={removeItem}
-                onDragStart={setDragId}
-                onDragOver={setDragOverId}
-                onDrop={handleDrop}
-                onDragEnd={() => {
-                  setDragId(null);
-                  setDragOverId(null);
-                }}
-              />
-            ))
+        {!isSignedIn && (
+          <p className="-mt-2 rounded-xl border border-border bg-surface/80 px-3 py-2 text-xs text-muted sm:-mt-4 sm:px-4 sm:text-sm">
+            Sign in to save your list to the cloud. Guest data stays in this browser only.
+          </p>
+        )}
+
+        <SuggestionPanel
+          items={items}
+          filterType={filter}
+          onStart={(id) => setStatus(id, "active")}
+        />
+
+        <section>
+          <div className="sticky top-0 z-20 -mx-4 bg-background/95 px-4 py-2 backdrop-blur-sm sm:static sm:mx-0 sm:bg-transparent sm:p-0">
+            <ListToolbar
+              filter={filter}
+              onFilterChange={setFilter}
+              counts={counts}
+              sortMode={sortMode}
+              onSortChange={handleSortChange}
+            />
+          </div>
+
+          {canDrag && sortMode === "manual" && (
+            <p className="text-xs text-muted">Drag cards to reorder.</p>
           )}
-        </div>
-      </section>
+
+          {sortMode === "manual" && filter !== "all" && (
+            <p className="text-xs text-muted">
+              Switch to <strong>All</strong> to reorder.
+            </p>
+          )}
+
+          <div className="mt-3 flex flex-col gap-3 sm:mt-4">
+            {filtered.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-border py-12 text-center sm:py-16">
+                <p className="text-muted">Nothing here yet.</p>
+                <button
+                  type="button"
+                  onClick={() => setShowAdd(true)}
+                  className="mt-3 text-sm font-medium text-accent hover:underline"
+                >
+                  Add your first item
+                </button>
+              </div>
+            ) : (
+              filtered.map((item) => (
+                <LeisureCard
+                  key={item.id}
+                  item={item}
+                  draggable={canDrag}
+                  isDragOver={dragOverId === item.id && dragId !== item.id}
+                  onStatusChange={setStatus}
+                  onEdit={setEditingItem}
+                  onRemove={removeItem}
+                  onDragStart={setDragId}
+                  onDragOver={setDragOverId}
+                  onDrop={handleDrop}
+                  onDragEnd={() => {
+                    setDragId(null);
+                    setDragOverId(null);
+                  }}
+                />
+              ))
+            )}
+          </div>
+        </section>
+      </div>
+
+      {/* Mobile FAB — thumb-reachable add */}
+      <button
+        type="button"
+        onClick={() => setShowAdd(true)}
+        aria-label="Add item"
+        className="fixed z-30 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-lg transition-transform hover:brightness-110 active:scale-95 sm:hidden"
+        style={{
+          right: "max(1rem, env(safe-area-inset-right))",
+          bottom: "calc(4.75rem + env(safe-area-inset-bottom))",
+        }}
+      >
+        <Plus className="h-6 w-6" />
+      </button>
 
       {showAdd && <ItemForm mode="add" onSave={handleSave} onClose={() => setShowAdd(false)} />}
 
@@ -247,6 +213,6 @@ export function LeisureApp() {
           onClose={() => setEditingItem(null)}
         />
       )}
-    </div>
+    </>
   );
 }

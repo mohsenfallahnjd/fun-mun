@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { openLibraryRating } from "@/lib/rating";
 import type { SearchResult } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
@@ -9,7 +10,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const res = await fetch(
-      `https://openlibrary.org/search.json?q=${encodeURIComponent(q)}&limit=8&fields=title,author_name,cover_i,first_publish_year,key`,
+      `https://openlibrary.org/search.json?q=${encodeURIComponent(q)}&limit=8&fields=title,author_name,cover_i,first_publish_year,key,ratings_average`,
       { next: { revalidate: 3600 } },
     );
 
@@ -24,6 +25,7 @@ export async function GET(request: NextRequest) {
         author_name?: string[];
         cover_i?: number;
         first_publish_year?: number;
+        ratings_average?: number;
       }>;
     };
 
@@ -39,6 +41,7 @@ export async function GET(request: NextRequest) {
             : undefined,
           year: doc.first_publish_year,
           sourceUrl: doc.key ? `https://openlibrary.org${doc.key}` : undefined,
+          rating: openLibraryRating(doc.ratings_average),
         },
       ];
     });

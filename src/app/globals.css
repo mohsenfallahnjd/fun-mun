@@ -23,6 +23,8 @@
   --tag-movie-bg: rgb(158 61 82 / 0.14);
   --tag-series: #2f6b62;
   --tag-series-bg: rgb(47 107 98 / 0.14);
+  --tag-game: #4a5c8c;
+  --tag-game-bg: rgb(74 92 140 / 0.14);
   --tag-place: #3d6b45;
   --tag-place-bg: rgb(61 107 69 / 0.14);
 
@@ -42,7 +44,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme]) {
     --background: #12100e;
     --background-subtle: #1a1714;
     --foreground: #f3ebe2;
@@ -65,6 +67,8 @@
     --tag-movie-bg: rgb(224 122 138 / 0.16);
     --tag-series: #6db5a8;
     --tag-series-bg: rgb(109 181 168 / 0.16);
+    --tag-game: #8fa4d4;
+    --tag-game-bg: rgb(143 164 212 / 0.16);
     --tag-place: #7cb883;
     --tag-place-bg: rgb(124 184 131 / 0.16);
 
@@ -114,4 +118,8 @@ body {
   animation:
     fade-in 0.3s ease-out,
     slide-in-from-bottom-2 0.3s ease-out;
+}
+
+[type="button"] {
+  cursor: pointer;
 }

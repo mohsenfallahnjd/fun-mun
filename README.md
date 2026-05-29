@@ -18,7 +18,7 @@ A simple, modern bookmarker for your free time: books, audiobooks, podcasts, mov
 bun install
 cp .env.example .env.local
 # Fill in AUTH_SECRET + DATABASE_URL (see below)
-bun run db:push
+bun run db:migrate
 bun run dev
 ```
 
@@ -37,24 +37,26 @@ Sign up with email and password at `/sign-up`. No third-party auth provider requ
 
 1. Create a database at [neon.tech](https://neon.tech) or add **Neon** from Vercel Storage
 2. Set `DATABASE_URL` in `.env.local`
-3. Push the schema:
+3. Apply migrations (additive — keeps existing data):
 
 ```bash
-bun run db:push
+bun run db:migrate
 ```
 
-Or run the SQL in `drizzle/0000_init.sql` manually.
+Avoid `db:push` on a database that already has data — Drizzle may propose destructive changes. Use `db:migrate` for schema updates instead.
+
+Or run the SQL in `drizzle/0000_init.sql` manually on a fresh database only.
 
 ### Optional: TMDB
 
-Set `TMDB_API_KEY` for richer movie posters (Wikipedia fallback works without it).
+Set `TMDB_API_KEY` for richer movie and series results. TMDB accepts either a **v3 API key** or a **v4 read access token** (JWT).
 
 ## Deploy on Vercel
 
 1. Push to GitHub and import in [Vercel](https://vercel.com/new)
 2. Add **Neon** integration (or set `DATABASE_URL` manually)
 3. Set `AUTH_SECRET` and `AUTH_URL` (your production domain)
-4. Run `bun run db:push` against production `DATABASE_URL` once
+4. Run `bun run db:migrate` against production `DATABASE_URL` once
 5. Deploy
 
 **Guest mode:** Without signing in, data stays in browser localStorage. After sign-in, use **Import local items** to move it to your profile.
@@ -69,7 +71,8 @@ Set `TMDB_API_KEY` for richer movie posters (Wikipedia fallback works without it
 ```bash
 bun run dev        # start dev server
 bun run build      # production build
-bun run db:push    # sync schema to Postgres
+bun run db:migrate # apply schema migrations (safe, keeps data)
+bun run db:push    # dev-only schema sync (can drop data — prefer db:migrate)
 bun run db:studio  # Drizzle Studio
 bun run lint       # Biome check
 ```

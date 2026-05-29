@@ -1,6 +1,6 @@
-import { BookOpen, Film, Headphones, MapPin, Mic, Tv } from "@/components/icons";
+import { BookOpen, Film, Gamepad2, Headphones, MapPin, Mic, Tv } from "@/components/icons";
 import type { LeisureType } from "@/lib/types";
-import { TYPE_COLORS } from "@/lib/types";
+import { getTypeLabel, TYPE_COLORS } from "@/lib/types";
 
 export function TypeIcon({
   type,
@@ -24,27 +24,20 @@ export function TypeIcon({
       return <Film {...props} />;
     case "series":
       return <Tv {...props} />;
+    case "game":
+      return <Gamepad2 {...props} />;
     case "place":
       return <MapPin {...props} />;
   }
 }
 
 export function TypeBadge({ type }: { type: LeisureType }) {
-  const labels: Record<LeisureType, string> = {
-    book: "Book",
-    audiobook: "Audiobook",
-    podcast: "Podcast",
-    movie: "Movie",
-    series: "Series",
-    place: "Place",
-  };
-
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${TYPE_COLORS[type]}`}
     >
       <TypeIcon type={type} className="h-3 w-3" />
-      {labels[type]}
+      {getTypeLabel(type)}
     </span>
   );
 }

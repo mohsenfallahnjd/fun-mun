@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { type NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/db";
 import { profiles } from "@/db/schema";
+import { generateUniqueUsername } from "@/lib/profile-service";
 
 export async function POST(request: NextRequest) {
   if (!process.env.DATABASE_URL) {
@@ -37,6 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     const passwordHash = await hash(password, 12);
+    const username = await generateUniqueUsername(email.split("@")[0]);
 
     const [created] = await db
       .insert(profiles)
@@ -44,8 +46,14 @@ export async function POST(request: NextRequest) {
         email,
         passwordHash,
         name: name || email.split("@")[0],
+        username,
       })
-      .returning({ id: profiles.id, email: profiles.email, name: profiles.name });
+      .returning({
+        id: profiles.id,
+        email: profiles.email,
+        name: profiles.name,
+        username: profiles.username,
+      });
 
     return NextResponse.json({ profile: created }, { status: 201 });
   } catch (error) {

@@ -1,13 +1,15 @@
 "use client";
 
 import { Image } from "@/components/Image";
+import { ItemTitle } from "@/components/ItemTitle";
 import { ExternalLink, GripVertical, Pencil, Trash2 } from "@/components/icons";
 import { Link } from "@/components/Link";
+import { RatingBadge } from "@/components/RatingBadge";
 import { StatusPicker } from "@/components/StatusPicker";
 import { TypeAvatar } from "@/components/TypeAvatar";
 import { TypeBadge } from "@/components/TypeBadge";
 import { formatProgress } from "@/lib/progress";
-import type { LeisureItem, LeisureStatus } from "@/lib/types";
+import { type LeisureItem, type LeisureStatus, STATUS_CARD_CLASS } from "@/lib/types";
 
 interface LeisureCardProps {
   item: LeisureItem;
@@ -35,16 +37,12 @@ export function LeisureCard({
   onDragEnd,
 }: LeisureCardProps) {
   const progressLabel = formatProgress(item);
-
-  const statusStyle = {
-    queue: "border-border bg-surface",
-    active: "border-accent/40 bg-accent/5 ring-1 ring-accent/20",
-    done: "border-border/60 bg-surface/50 opacity-80",
-  }[item.status];
+  const statusStyle = STATUS_CARD_CLASS[item.status];
 
   return (
     <article
       draggable={draggable}
+      data-status={item.status}
       onDragStart={() => onDragStart?.(item.id)}
       onDragOver={(e) => {
         e.preventDefault();
@@ -55,7 +53,7 @@ export function LeisureCard({
         onDrop?.(item.id);
       }}
       onDragEnd={onDragEnd}
-      className={`group flex gap-3 rounded-2xl border p-4 transition-all hover:shadow-md ${statusStyle} ${
+      className={`group flex gap-3 rounded-2xl border p-4 transition-all duration-200 hover:shadow-md ${statusStyle} ${
         isDragOver ? "border-accent ring-2 ring-accent/30" : ""
       } ${draggable ? "cursor-grab active:cursor-grabbing" : ""}`}
     >
@@ -78,6 +76,11 @@ export function LeisureCard({
         ) : (
           <TypeAvatar type={item.type} />
         )}
+        {item.rating && (
+          <div className="absolute bottom-1 right-1">
+            <RatingBadge rating={item.rating} />
+          </div>
+        )}
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -86,7 +89,9 @@ export function LeisureCard({
             <h3
               className={`truncate text-base font-semibold leading-snug ${item.status === "done" ? "line-through" : ""}`}
             >
-              {item.title}
+              <Link href={`/items/${item.id}`} className="no-underline hover:text-accent">
+                <ItemTitle title={item.title} originalTitle={item.originalTitle} />
+              </Link>
             </h3>
             {item.subtitle && <p className="truncate text-sm text-muted">{item.subtitle}</p>}
           </div>
@@ -105,6 +110,7 @@ export function LeisureCard({
           value={item.status}
           onChange={(status) => onStatusChange(item.id, status)}
           size="sm"
+          fullWidth
         />
 
         <div className="flex flex-wrap items-center gap-2">
@@ -121,6 +127,7 @@ export function LeisureCard({
           )}
 
           {item.year && <span className="text-xs text-muted">{item.year}</span>}
+          {item.rating && <RatingBadge rating={item.rating} variant="inline" />}
 
           <div className="ml-auto flex gap-1">
             <button

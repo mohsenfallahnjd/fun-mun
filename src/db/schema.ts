@@ -1,14 +1,42 @@
-import { integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  integer,
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+  unique,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 export const profiles = pgTable("profiles", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull().unique(),
   passwordHash: text("password_hash").notNull(),
   name: text("name"),
+  username: text("username").unique(),
+  bio: text("bio"),
+  isPublic: boolean("is_public").notNull().default(true),
   imageUrl: text("image_url"),
+  theme: text("theme").default("terracotta"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
+
+export const follows = pgTable(
+  "follows",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    followerId: uuid("follower_id")
+      .notNull()
+      .references(() => profiles.id, { onDelete: "cascade" }),
+    followingId: uuid("following_id")
+      .notNull()
+      .references(() => profiles.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [unique("follows_pair_unique").on(table.followerId, table.followingId)],
+);
 
 export const leisureItems = pgTable("leisure_items", {
   id: text("id").primaryKey(),
@@ -21,8 +49,10 @@ export const leisureItems = pgTable("leisure_items", {
   imageUrl: text("image_url"),
   watchUrl: text("watch_url"),
   notes: text("notes"),
+  originalTitle: text("original_title"),
   status: text("status").notNull().default("queue"),
   year: integer("year"),
+  rating: jsonb("rating"),
   progress: jsonb("progress"),
   order: integer("order"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),

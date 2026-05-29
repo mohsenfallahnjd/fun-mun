@@ -3,10 +3,10 @@ import type { LeisureItem, LeisureStatus } from "./types";
 export type SortMode = "manual" | "newest" | "oldest" | "title" | "status";
 
 export const SORT_OPTIONS: { value: SortMode; label: string }[] = [
-  { value: "manual", label: "Custom order" },
-  { value: "newest", label: "Newest first" },
-  { value: "oldest", label: "Oldest first" },
-  { value: "title", label: "Title A–Z" },
+  { value: "manual", label: "Custom" },
+  { value: "newest", label: "Newest" },
+  { value: "oldest", label: "Oldest" },
+  { value: "title", label: "A–Z" },
   { value: "status", label: "Status" },
 ];
 

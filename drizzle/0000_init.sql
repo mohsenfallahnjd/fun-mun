@@ -25,8 +25,14 @@ CREATE TABLE IF NOT EXISTS "leisure_items" (
   "created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 
-ALTER TABLE "leisure_items"
-  ADD CONSTRAINT "leisure_items_user_id_profiles_id_fk"
-  FOREIGN KEY ("user_id") REFERENCES "profiles"("id") ON DELETE cascade ON UPDATE no action;
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'leisure_items_user_id_profiles_id_fk'
+  ) THEN
+    ALTER TABLE "leisure_items"
+      ADD CONSTRAINT "leisure_items_user_id_profiles_id_fk"
+      FOREIGN KEY ("user_id") REFERENCES "profiles"("id") ON DELETE cascade ON UPDATE no action;
+  END IF;
+END $$;
 
 CREATE INDEX IF NOT EXISTS "leisure_items_user_id_idx" ON "leisure_items" ("user_id");
