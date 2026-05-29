@@ -198,20 +198,20 @@ async function searchMoviesWikipedia(q: string): Promise<SearchResult[]> {
   }
 }
 
-export async function searchMovies(q: string): Promise<SearchResult[]> {
+export async function searchMovies(q: string, limit = 8): Promise<SearchResult[]> {
   if (hasTmdbKey()) {
     const tmdbResults = await searchMoviesTmdb(q);
-    if (tmdbResults.length > 0) return tmdbResults;
+    if (tmdbResults.length > 0) return tmdbResults.slice(0, limit);
   }
 
-  return searchMoviesWikipedia(q);
+  return (await searchMoviesWikipedia(q)).slice(0, limit);
 }
 
-export async function searchSeries(q: string): Promise<SearchResult[]> {
+export async function searchSeries(q: string, limit = 8): Promise<SearchResult[]> {
   if (hasTmdbKey()) {
     const tmdbResults = await searchSeriesTmdb(q);
-    if (tmdbResults.length > 0) return tmdbResults;
+    if (tmdbResults.length > 0) return tmdbResults.slice(0, limit);
   }
 
-  return searchSeriesTvmaze(q);
+  return (await searchSeriesTvmaze(q)).slice(0, limit);
 }
