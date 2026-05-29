@@ -3,6 +3,7 @@ export {
   Bookmark,
   BookOpen,
   Check,
+  Cloud,
   Download,
   ExternalLink,
   Film,

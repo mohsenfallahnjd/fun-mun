@@ -5,54 +5,68 @@ A simple, modern bookmarker for your free time: books, audiobooks, podcasts, mov
 ## Features
 
 - **6 types**: Book, Audiobook, Podcast, Movie, Series, Place
-- **Auto-fill** when adding items (Open Library for books, TMDB for movies/series)
-- **Optional links** — save where you watch or listen (Netflix, Spotify, Filimo, etc.)
-- **Filter by type** with counts
+- **Auto-fill** when adding items (Open Library, TVMaze, Wikipedia)
+- **Optional links** with preview and auto-fill
+- **User profiles** — sign in and save your list to the cloud
+- **Filter, sort, drag to reorder**
 - **Random suggestion** — “What should I do tonight?”
-- **Status tracking** — queue → in progress → done
-- **Export / import** JSON backup (data lives in your browser)
-- **PWA** — install on phone/desktop, works offline for your saved list
+- **PWA** — install on phone/desktop
 
 ## Run locally
 
 ```bash
 bun install
+cp .env.example .env.local
+# Fill in Clerk + DATABASE_URL (see below)
+bun run db:push
 bun run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-### Optional: movie & series auto-fill
+### Auth (Clerk)
 
-1. Get a free API key from [TMDB](https://www.themoviedb.org/settings/api)
-2. Copy `.env.example` to `.env.local` and set `TMDB_API_KEY`
+1. Create an app at [clerk.com](https://clerk.com) or add **Clerk** from the [Vercel Marketplace](https://vercel.com/marketplace/clerk)
+2. Add to `.env.local`:
+   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+   - `CLERK_SECRET_KEY`
 
-Books work without any API key (Open Library).
+### Database (Neon Postgres)
+
+1. Create a database at [neon.tech](https://neon.tech) or add **Neon** from Vercel Storage
+2. Set `DATABASE_URL` in `.env.local`
+3. Push the schema:
+
+```bash
+bun run db:push
+```
+
+Or run the SQL in `drizzle/0000_init.sql` manually.
+
+### Optional: TMDB
+
+Set `TMDB_API_KEY` for richer movie posters (Wikipedia fallback works without it).
 
 ## Deploy on Vercel
 
-1. Push this repo to GitHub
-2. Import the project in [Vercel](https://vercel.com/new)
-3. Add environment variable `TMDB_API_KEY` (optional, for movie/series search)
+1. Push to GitHub and import in [Vercel](https://vercel.com/new)
+2. Add **Clerk** and **Neon** integrations (or set env vars manually)
+3. Run `bun run db:push` against production `DATABASE_URL` once
 4. Deploy
 
-The app is a PWA — users can install it from the browser. Service worker is built automatically at deploy time via Serwist.
-
-No database required — your list is stored in browser localStorage. Use Export to back up.
+**Guest mode:** Without signing in, data stays in browser localStorage. After sign-in, use **Import local items** to move it to your profile.
 
 ## Stack
 
-- Next.js 16 (App Router)
-- Tailwind CSS 4
-- Bun + Biome
-- Open Library API + TMDB API
+- Next.js 16 · Tailwind CSS 4 · Bun · Biome
+- Clerk (auth) · Neon Postgres · Drizzle ORM
 
 ## Scripts
 
 ```bash
 bun run dev        # start dev server
 bun run build      # production build
-bun run lint       # check with Biome
-bun run lint:fix   # fix with Biome
-bun run format     # format with Biome
+bun run db:push    # sync schema to Postgres
+bun run db:studio  # Drizzle Studio
+bun run lint       # Biome check
 ```

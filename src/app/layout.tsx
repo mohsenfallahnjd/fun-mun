@@ -1,3 +1,4 @@
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata, Viewport } from "next";
 import { SerwistProvider } from "@/components/SerwistProvider";
 import "./globals.css";
@@ -40,10 +41,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full antialiased">
-      <body className="min-h-full flex flex-col bg-background text-foreground">
-        <SerwistProvider swUrl="/serwist/sw.js">{children}</SerwistProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" className="h-full antialiased">
+        <body className="min-h-full flex flex-col bg-background text-foreground">
+          <SerwistProvider swUrl="/serwist/sw.js">{children}</SerwistProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

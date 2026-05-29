@@ -19,6 +19,10 @@ export function loadItems(): LeisureItem[] {
   }
 }
 
+export function clearItems(): void {
+  localStorage.removeItem(STORAGE_KEY);
+}
+
 export function saveItems(items: LeisureItem[]): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
 }

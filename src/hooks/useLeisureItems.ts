@@ -1,24 +1,75 @@
 "use client";
 
+import { useUser } from "@clerk/nextjs";
 import { nanoid } from "nanoid";
 import { useCallback, useEffect, useState } from "react";
 import { reorderItems as applyReorder } from "@/lib/sort";
 import { loadItems, saveItems } from "@/lib/storage";
 import type { LeisureItem, LeisureStatus } from "@/lib/types";
 
+async function fetchCloudItems(): Promise<LeisureItem[] | null> {
+  const res = await fetch("/api/items");
+  if (res.status === 401) return null;
+  if (!res.ok) return null;
+  const data = (await res.json()) as { items: LeisureItem[] };
+  return data.items;
+}
+
+async function saveCloudItems(items: LeisureItem[]): Promise<boolean> {
+  const res = await fetch("/api/items", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ items }),
+  });
+  return res.ok;
+}
+
 export function useLeisureItems() {
+  const { isSignedIn, isLoaded } = useUser();
   const [items, setItems] = useState<LeisureItem[]>([]);
   const [ready, setReady] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [cloudEnabled, setCloudEnabled] = useState(false);
 
   useEffect(() => {
-    setItems(loadItems());
-    setReady(true);
-  }, []);
+    if (!isLoaded) return;
 
-  const persist = useCallback((next: LeisureItem[]) => {
-    setItems(next);
-    saveItems(next);
-  }, []);
+    const load = async () => {
+      if (isSignedIn) {
+        const cloud = await fetchCloudItems();
+        if (cloud) {
+          setItems(cloud);
+          setCloudEnabled(true);
+        } else {
+          setItems(loadItems());
+          setCloudEnabled(false);
+        }
+      } else {
+        setItems(loadItems());
+        setCloudEnabled(false);
+      }
+      setReady(true);
+    };
+
+    load();
+  }, [isSignedIn, isLoaded]);
+
+  const persist = useCallback(
+    async (next: LeisureItem[]) => {
+      setItems(next);
+      if (isSignedIn && cloudEnabled) {
+        setSyncing(true);
+        try {
+          await saveCloudItems(next);
+        } finally {
+          setSyncing(false);
+        }
+      } else {
+        saveItems(next);
+      }
+    },
+    [isSignedIn, cloudEnabled],
+  );
 
   const addItem = useCallback(
     (item: Omit<LeisureItem, "id" | "createdAt" | "order">) => {
@@ -73,6 +124,9 @@ export function useLeisureItems() {
   return {
     items,
     ready,
+    syncing,
+    cloudEnabled,
+    isSignedIn: isSignedIn ?? false,
     addItem,
     updateItem,
     removeItem,

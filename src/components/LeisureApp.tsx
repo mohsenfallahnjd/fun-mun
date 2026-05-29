@@ -6,6 +6,7 @@ import type { ItemDraft } from "@/components/ItemForm";
 import { ItemForm } from "@/components/ItemForm";
 import { Bookmark, Download, Plus, Upload } from "@/components/icons";
 import { LeisureCard } from "@/components/LeisureCard";
+import { ProfileBar } from "@/components/ProfileBar";
 import { SortBar } from "@/components/SortBar";
 import { SuggestionPanel } from "@/components/SuggestionPanel";
 import { useLeisureItems } from "@/hooks/useLeisureItems";
@@ -14,8 +15,19 @@ import { exportItems, importItems } from "@/lib/storage";
 import type { LeisureItem, LeisureType } from "@/lib/types";
 
 export function LeisureApp() {
-  const { items, ready, addItem, updateItem, removeItem, setStatus, reorderItems, replaceAll } =
-    useLeisureItems();
+  const {
+    items,
+    ready,
+    syncing,
+    cloudEnabled,
+    isSignedIn,
+    addItem,
+    updateItem,
+    removeItem,
+    setStatus,
+    reorderItems,
+    replaceAll,
+  } = useLeisureItems();
   const [filter, setFilter] = useState<LeisureType | "all">("all");
   const [sortMode, setSortMode] = useState<SortMode>("manual");
   const [showAdd, setShowAdd] = useState(false);
@@ -122,40 +134,55 @@ export function LeisureApp() {
           </p>
         </div>
 
-        <div className="flex shrink-0 gap-2">
-          <button
-            type="button"
-            onClick={handleExport}
-            title="Export backup"
-            className="rounded-xl border border-border p-2.5 text-muted transition-colors hover:bg-muted/60 hover:text-foreground"
-          >
-            <Download className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            title="Import backup"
-            className="rounded-xl border border-border p-2.5 text-muted transition-colors hover:bg-muted/60 hover:text-foreground"
-          >
-            <Upload className="h-4 w-4" />
-          </button>
-          <input
-            ref={fileRef}
-            type="file"
-            accept="application/json"
-            className="hidden"
-            onChange={handleImport}
-          />
-          <button
-            type="button"
-            onClick={() => setShowAdd(true)}
-            className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground shadow-sm transition-all hover:brightness-110"
-          >
-            <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">Add</span>
-          </button>
+        <div className="flex shrink-0 flex-col items-end gap-2 sm:flex-row sm:items-start">
+          <ProfileBar />
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={handleExport}
+              title="Export backup"
+              className="rounded-xl border border-border p-2.5 text-muted transition-colors hover:bg-muted/60 hover:text-foreground"
+            >
+              <Download className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              title="Import backup"
+              className="rounded-xl border border-border p-2.5 text-muted transition-colors hover:bg-muted/60 hover:text-foreground"
+            >
+              <Upload className="h-4 w-4" />
+            </button>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="application/json"
+              className="hidden"
+              onChange={handleImport}
+            />
+            <button
+              type="button"
+              onClick={() => setShowAdd(true)}
+              className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground shadow-sm transition-all hover:brightness-110"
+            >
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">Add</span>
+            </button>
+          </div>
         </div>
       </header>
+
+      {isSignedIn && cloudEnabled && (
+        <p className="-mt-4 text-xs text-muted">
+          {syncing ? "Saving to your profile…" : "Synced to your profile"}
+        </p>
+      )}
+
+      {!isSignedIn && (
+        <p className="-mt-4 rounded-xl border border-border bg-surface/80 px-4 py-2 text-sm text-muted">
+          Sign in to save your list to the cloud. Guest data stays in this browser only.
+        </p>
+      )}
 
       <SuggestionPanel
         items={items}
