@@ -1,21 +1,17 @@
-import { SEED_ITEMS } from "./seed-data";
 import { withDefaultOrder } from "./sort";
 import type { LeisureItem } from "./types";
 
 const STORAGE_KEY = "fun-mun-leisure-items";
 
 export function loadItems(): LeisureItem[] {
-  if (typeof window === "undefined") return SEED_ITEMS;
+  if (typeof window === "undefined") return [];
 
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(SEED_ITEMS));
-      return SEED_ITEMS;
-    }
+    if (!raw) return [];
     return withDefaultOrder(JSON.parse(raw) as LeisureItem[]);
   } catch {
-    return SEED_ITEMS;
+    return [];
   }
 }
 

@@ -48,7 +48,15 @@ export async function POST(request: NextRequest) {
       .returning({ id: profiles.id, email: profiles.email, name: profiles.name });
 
     return NextResponse.json({ profile: created }, { status: 201 });
-  } catch {
+  } catch (error) {
+    console.error("[register]", error);
+    const message = error instanceof Error ? error.message : "";
+    if (message.includes("relation") && message.includes("does not exist")) {
+      return NextResponse.json(
+        { error: "Database not set up. Run: bun run db:push" },
+        { status: 503 },
+      );
+    }
     return NextResponse.json({ error: "Registration failed" }, { status: 500 });
   }
 }
