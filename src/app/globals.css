@@ -1,22 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f3ece3;
-  --background-subtle: #e8dfd3;
-  --foreground: #1c1713;
-  --surface: #fffaf4;
+  --background: #f8fafc;
+  --background-subtle: #f1f5f9;
+  --foreground: #0f172a;
+  --surface: #ffffff;
   --surface-raised: #ffffff;
-  --muted: #6e665e;
-  --border: #ddd2c4;
-  --accent: #b85c38;
-  --accent-hover: #9c4a2b;
-  --accent-soft: rgb(184 92 56 / 0.12);
-  --accent-foreground: #fff9f4;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-soft: rgb(37 99 235 / 0.1);
+  --accent-foreground: #ffffff;
 
-  --tag-book: #8b5e34;
-  --tag-book-bg: rgb(139 94 52 / 0.14);
-  --tag-audiobook: #a65c32;
-  --tag-audiobook-bg: rgb(166 92 50 / 0.14);
+  --tag-book: #b45309;
+  --tag-book-bg: rgb(180 83 9 / 0.12);
+  --tag-audiobook: #ea580c;
+  --tag-audiobook-bg: rgb(234 88 12 / 0.12);
   --tag-podcast: #6b4f8a;
   --tag-podcast-bg: rgb(107 79 138 / 0.14);
   --tag-movie: #9e3d52;
@@ -29,7 +29,7 @@
   --tag-place-bg: rgb(61 107 69 / 0.14);
 
   --success: #3d6b45;
-  --shadow: rgb(28 23 19 / 0.06);
+  --shadow: rgb(15 23 42 / 0.06);
 }
 
 @theme inline {
@@ -45,22 +45,22 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --background: #12100e;
-    --background-subtle: #1a1714;
-    --foreground: #f3ebe2;
-    --surface: #1c1916;
-    --surface-raised: #252220;
-    --muted: #a69d94;
-    --border: #342f2a;
-    --accent: #d4845f;
-    --accent-hover: #e09872;
-    --accent-soft: rgb(212 132 95 / 0.16);
-    --accent-foreground: #1c1713;
+    --background: #09090b;
+    --background-subtle: #18181b;
+    --foreground: #f8fafc;
+    --surface: #18181b;
+    --surface-raised: #27272a;
+    --muted: #94a3b8;
+    --border: #334155;
+    --accent: #60a5fa;
+    --accent-hover: #93c5fd;
+    --accent-soft: rgb(96 165 250 / 0.14);
+    --accent-foreground: #0f172a;
 
-    --tag-book: #d4a574;
-    --tag-book-bg: rgb(212 165 116 / 0.16);
-    --tag-audiobook: #e09a6a;
-    --tag-audiobook-bg: rgb(224 154 106 / 0.16);
+    --tag-book: #fbbf24;
+    --tag-book-bg: rgb(251 191 36 / 0.14);
+    --tag-audiobook: #fb923c;
+    --tag-audiobook-bg: rgb(251 146 60 / 0.14);
     --tag-podcast: #b89fd4;
     --tag-podcast-bg: rgb(184 159 212 / 0.16);
     --tag-movie: #e07a8a;

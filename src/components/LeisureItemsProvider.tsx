@@ -15,6 +15,7 @@ interface LeisureItemsContextValue {
   syncing: boolean;
   cloudEnabled: boolean;
   isSignedIn: boolean;
+  sessionReady: boolean;
   addItem: (item: Omit<LeisureItem, "id" | "createdAt" | "order">) => LeisureItem;
   updateItem: (id: string, patch: Partial<LeisureItem>) => void;
   removeItem: (id: string) => void;
@@ -42,22 +43,24 @@ async function saveCloudItems(items: LeisureItem[]): Promise<boolean> {
   return res.ok;
 }
 
-let inflightLoad: Promise<{ items: LeisureItem[]; cloud: boolean }> | null = null;
+const inflightLoads = new Map<string, Promise<{ items: LeisureItem[]; cloud: boolean }>>();
 
-function loadItemsOnce(isSignedIn: boolean): Promise<{ items: LeisureItem[]; cloud: boolean }> {
-  if (inflightLoad) return inflightLoad;
+function loadItemsForAuth(isSignedIn: boolean): Promise<{ items: LeisureItem[]; cloud: boolean }> {
+  const key = isSignedIn ? "signed-in" : "guest";
+  const existing = inflightLoads.get(key);
+  if (existing) return existing;
 
-  inflightLoad = (async () => {
+  const promise = (async () => {
     const local = loadItems();
 
     if (isSignedIn) {
       const cloud = await fetchCloudItems();
       if (cloud !== null) {
         if (cloud.length > 0) {
+          saveItems(cloud);
           return { items: cloud, cloud: true };
         }
 
-        // Cloud is empty (new DB, migration reset, etc.) — restore from browser backup.
         if (local.length > 0) {
           await saveCloudItems(local);
           return { items: local, cloud: true };
@@ -69,16 +72,22 @@ function loadItemsOnce(isSignedIn: boolean): Promise<{ items: LeisureItem[]; clo
 
     return { items: local, cloud: false };
   })().finally(() => {
-    inflightLoad = null;
+    inflightLoads.delete(key);
   });
 
-  return inflightLoad;
+  inflightLoads.set(key, promise);
+  return promise;
 }
 
 export function LeisureItemsProvider({ children }: { children: React.ReactNode }) {
   const { status } = useSession();
-  const isSignedIn = status === "authenticated";
-  const isLoaded = status !== "loading";
+  const sessionReady = status !== "loading";
+  const signedInRef = useRef(false);
+
+  if (status === "authenticated") signedInRef.current = true;
+  if (status === "unauthenticated") signedInRef.current = false;
+
+  const isSignedIn = status === "authenticated" || (status === "loading" && signedInRef.current);
 
   const [items, setItems] = useState<LeisureItem[]>([]);
   const [ready, setReady] = useState(false);
@@ -90,6 +99,8 @@ export function LeisureItemsProvider({ children }: { children: React.ReactNode }
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const saveInFlightRef = useRef(false);
   const pendingSaveRef = useRef(false);
+  const prevAuthRef = useRef<boolean | null>(null);
+  const initialLoadDoneRef = useRef(false);
 
   itemsRef.current = items;
   cloudEnabledRef.current = cloudEnabled;
@@ -129,20 +140,33 @@ export function LeisureItemsProvider({ children }: { children: React.ReactNode }
   }, [flushCloudSave]);
 
   useEffect(() => {
-    if (!isLoaded) return;
+    if (!sessionReady) return;
+
+    const signedIn = status === "authenticated";
+    const authChanged = prevAuthRef.current !== null && prevAuthRef.current !== signedIn;
+    prevAuthRef.current = signedIn;
+
+    if (initialLoadDoneRef.current && !authChanged) return;
 
     let cancelled = false;
-    loadItemsOnce(isSignedIn).then(({ items: loaded, cloud }) => {
+
+    const run = async () => {
+      if (authChanged) await flushCloudSave();
+
+      const { items: loaded, cloud } = await loadItemsForAuth(signedIn);
       if (cancelled) return;
       setItems(loaded);
       setCloudEnabled(cloud);
       setReady(true);
-    });
+      initialLoadDoneRef.current = true;
+    };
+
+    void run();
 
     return () => {
       cancelled = true;
     };
-  }, [isSignedIn, isLoaded]);
+  }, [sessionReady, status, flushCloudSave]);
 
   useEffect(() => {
     const flush = () => {
@@ -159,11 +183,10 @@ export function LeisureItemsProvider({ children }: { children: React.ReactNode }
     (next: LeisureItem[]) => {
       setItems(next);
       itemsRef.current = next;
+      saveItems(next);
 
       if (isSignedIn && cloudEnabledRef.current) {
         scheduleCloudSave();
-      } else {
-        saveItems(next);
       }
     },
     [isSignedIn, scheduleCloudSave],
@@ -224,7 +247,8 @@ export function LeisureItemsProvider({ children }: { children: React.ReactNode }
     ready,
     syncing,
     cloudEnabled,
-    isSignedIn: isSignedIn ?? false,
+    isSignedIn,
+    sessionReady,
     addItem,
     updateItem,
     removeItem,

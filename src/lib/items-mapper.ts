@@ -1,6 +1,82 @@
 import type { DbLeisureItem } from "@/db/schema";
 import type { ContentRating } from "@/lib/rating";
-import type { LeisureItem, LeisureProgress, LeisureStatus, LeisureType } from "@/lib/types";
+import {
+  LEISURE_TYPES,
+  type LeisureItem,
+  type LeisureProgress,
+  type LeisureStatus,
+  type LeisureType,
+  STATUS_OPTIONS,
+} from "@/lib/types";
+
+const VALID_TYPES = new Set<LeisureType>(LEISURE_TYPES.map((t) => t.value));
+const VALID_STATUS = new Set<LeisureStatus>(STATUS_OPTIONS.map((s) => s.value));
+
+function parseCreatedAt(value: string | undefined): Date {
+  if (value) {
+    const parsed = new Date(value);
+    if (!Number.isNaN(parsed.getTime())) return parsed;
+  }
+  return new Date();
+}
+
+export function normalizeItemsForSave(items: LeisureItem[]): LeisureItem[] {
+  const byId = new Map<string, LeisureItem>();
+
+  for (const raw of items) {
+    if (!raw || typeof raw !== "object") continue;
+
+    const id = typeof raw.id === "string" ? raw.id.trim() : String(raw.id ?? "").trim();
+    const title = typeof raw.title === "string" ? raw.title.trim() : "";
+    if (!id || !title) continue;
+
+    const type = VALID_TYPES.has(raw.type) ? raw.type : "book";
+    const status = VALID_STATUS.has(raw.status) ? raw.status : "queue";
+
+    byId.set(id, {
+      ...raw,
+      id,
+      title,
+      type,
+      status,
+      createdAt: parseCreatedAt(raw.createdAt).toISOString(),
+      year: typeof raw.year === "number" && Number.isFinite(raw.year) ? raw.year : undefined,
+      order: typeof raw.order === "number" && Number.isFinite(raw.order) ? raw.order : undefined,
+    });
+  }
+
+  return Array.from(byId.values());
+}
+
+/** Add incoming items without overwriting existing ids (for local → cloud merge). */
+export function mergeItemLists(incoming: LeisureItem[], existing: LeisureItem[]): LeisureItem[] {
+  const byId = new Map<string, LeisureItem>();
+  for (const item of existing) byId.set(item.id, item);
+  for (const item of normalizeItemsForSave(incoming)) {
+    if (!byId.has(item.id)) byId.set(item.id, item);
+  }
+  return Array.from(byId.values());
+}
+
+export function itemToInsertRow(item: LeisureItem, userId: string) {
+  return {
+    id: item.id,
+    userId,
+    type: item.type,
+    title: item.title,
+    subtitle: item.subtitle ?? null,
+    imageUrl: item.imageUrl ?? null,
+    watchUrl: item.watchUrl ?? null,
+    notes: item.notes ?? null,
+    originalTitle: item.originalTitle ?? null,
+    status: item.status,
+    year: item.year ?? null,
+    rating: item.rating ?? null,
+    progress: item.progress ?? null,
+    order: item.order ?? null,
+    createdAt: parseCreatedAt(item.createdAt),
+  };
+}
 
 export function rowToItem(row: DbLeisureItem): LeisureItem {
   return {

@@ -34,6 +34,7 @@ export async function PUT(request: NextRequest) {
     if (error instanceof Error && error.message === "Unauthorized") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    console.error("PUT /api/items failed:", error);
     return NextResponse.json({ error: "Failed to save items" }, { status: 500 });
   }
 }

@@ -1,4 +1,14 @@
-export type ThemeId = "terracotta" | "ocean" | "forest" | "plum" | "rose" | "slate";
+import { APP_ICON_BG, APP_ICON_MARK } from "./app-icon";
+
+export type ThemeId =
+  | "terracotta"
+  | "ink"
+  | "white"
+  | "ocean"
+  | "forest"
+  | "plum"
+  | "rose"
+  | "slate";
 
 export interface ThemeOption {
   id: ThemeId;
@@ -11,20 +21,20 @@ export interface ThemeOption {
 export const DEFAULT_THEME: ThemeId = "terracotta";
 
 const LIGHT_STRUCTURE = {
-  "--foreground": "#1c1713",
-  "--surface": "#fffaf4",
+  "--foreground": "#0f172a",
+  "--surface": "#ffffff",
   "--surface-raised": "#ffffff",
-  "--muted": "#6e665e",
-  "--border": "#ddd2c4",
-  "--shadow": "rgb(28 23 19 / 0.06)",
+  "--muted": "#64748b",
+  "--border": "#e2e8f0",
+  "--shadow": "rgb(15 23 42 / 0.06)",
 } as const;
 
 const DARK_STRUCTURE = {
-  "--foreground": "#f3ebe2",
-  "--surface": "#1c1916",
-  "--surface-raised": "#252220",
-  "--muted": "#a69d94",
-  "--border": "#342f2a",
+  "--foreground": "#f8fafc",
+  "--surface": "#18181b",
+  "--surface-raised": "#27272a",
+  "--muted": "#94a3b8",
+  "--border": "#334155",
   "--shadow": "rgb(0 0 0 / 0.25)",
 } as const;
 
@@ -36,23 +46,88 @@ function palette(mode: "light" | "dark", colors: Record<string, string>): Record
 export const THEMES: ThemeOption[] = [
   {
     id: "terracotta",
-    label: "Terracotta",
-    swatch: "#b85c38",
+    label: "Blue",
+    swatch: "#2563eb",
     light: palette("light", {
-      "--background": "#f3ece3",
-      "--background-subtle": "#e8dfd3",
-      "--accent": "#b85c38",
-      "--accent-hover": "#9c4a2b",
-      "--accent-soft": "rgb(184 92 56 / 0.12)",
-      "--accent-foreground": "#fff9f4",
+      "--background": "#f8fafc",
+      "--background-subtle": "#f1f5f9",
+      "--accent": "#2563eb",
+      "--accent-hover": "#1d4ed8",
+      "--accent-soft": "rgb(37 99 235 / 0.1)",
+      "--accent-foreground": "#ffffff",
     }),
     dark: palette("dark", {
-      "--background": "#12100e",
-      "--background-subtle": "#1a1714",
-      "--accent": "#d4845f",
-      "--accent-hover": "#e09872",
-      "--accent-soft": "rgb(212 132 95 / 0.16)",
-      "--accent-foreground": "#1c1713",
+      "--background": "#09090b",
+      "--background-subtle": "#18181b",
+      "--accent": "#60a5fa",
+      "--accent-hover": "#93c5fd",
+      "--accent-soft": "rgb(96 165 250 / 0.14)",
+      "--accent-foreground": "#0f172a",
+    }),
+  },
+  {
+    id: "ink",
+    label: "Ink",
+    swatch: APP_ICON_MARK,
+    light: palette("light", {
+      "--background": APP_ICON_BG,
+      "--background-subtle": "#f5f5f5",
+      "--foreground": APP_ICON_MARK,
+      "--surface": APP_ICON_BG,
+      "--border": "#e5e5e5",
+      "--muted": "#737373",
+      "--shadow": "rgb(10 10 10 / 0.06)",
+      "--accent": APP_ICON_MARK,
+      "--accent-hover": "#262626",
+      "--accent-soft": "rgb(10 10 10 / 0.08)",
+      "--accent-foreground": APP_ICON_BG,
+    }),
+    dark: palette("dark", {
+      "--background": APP_ICON_MARK,
+      "--background-subtle": "#141414",
+      "--foreground": "#fafafa",
+      "--surface": "#141414",
+      "--surface-raised": "#1f1f1f",
+      "--border": "#262626",
+      "--muted": "#a3a3a3",
+      "--shadow": "rgb(0 0 0 / 0.25)",
+      "--accent": "#fafafa",
+      "--accent-hover": "#e5e5e5",
+      "--accent-soft": "rgb(250 250 250 / 0.08)",
+      "--accent-foreground": APP_ICON_MARK,
+    }),
+  },
+  {
+    id: "white",
+    label: "White",
+    swatch: APP_ICON_BG,
+    light: palette("light", {
+      "--background": APP_ICON_BG,
+      "--background-subtle": APP_ICON_BG,
+      "--foreground": "#262626",
+      "--surface": APP_ICON_BG,
+      "--surface-raised": APP_ICON_BG,
+      "--border": "#ebebeb",
+      "--muted": "#a3a3a3",
+      "--shadow": "rgb(10 10 10 / 0.04)",
+      "--accent": "#525252",
+      "--accent-hover": "#404040",
+      "--accent-soft": "rgb(82 82 82 / 0.06)",
+      "--accent-foreground": APP_ICON_BG,
+    }),
+    dark: palette("dark", {
+      "--background": "#262626",
+      "--background-subtle": "#2e2e2e",
+      "--foreground": APP_ICON_BG,
+      "--surface": "#2e2e2e",
+      "--surface-raised": "#363636",
+      "--border": "#404040",
+      "--muted": "#a3a3a3",
+      "--shadow": "rgb(0 0 0 / 0.2)",
+      "--accent": APP_ICON_BG,
+      "--accent-hover": "#f5f5f5",
+      "--accent-soft": "rgb(255 255 255 / 0.08)",
+      "--accent-foreground": "#262626",
     }),
   },
   {

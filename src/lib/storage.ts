@@ -33,3 +33,11 @@ export function importItems(json: string): LeisureItem[] {
   saveItems(parsed);
   return parsed;
 }
+
+/** Local items whose ids are not in the synced cloud list (guest/import leftovers). */
+export function countUnmergedLocalItems(cloudItems: LeisureItem[]): number {
+  const local = loadItems();
+  if (local.length === 0) return 0;
+  const cloudIds = new Set(cloudItems.map((item) => item.id));
+  return local.filter((item) => !cloudIds.has(item.id)).length;
+}

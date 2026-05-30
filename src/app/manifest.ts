@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { APP_ICON_ACCENT } from "@/lib/app-icon";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
@@ -7,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Bookmark books, movies, series, podcasts and places for your free time.",
     start_url: "/",
     display: "standalone",
-    background_color: "#f3ece3",
-    theme_color: "#b85c38",
+    background_color: "#f8fafc",
+    theme_color: APP_ICON_ACCENT,
     orientation: "portrait",
     icons: [
       {

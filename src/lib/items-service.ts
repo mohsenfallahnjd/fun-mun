@@ -2,8 +2,10 @@ import { count, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { leisureItems } from "@/db/schema";
 import { getOrCreateProfile } from "@/lib/auth";
-import { rowToItem } from "@/lib/items-mapper";
+import { itemToInsertRow, normalizeItemsForSave, rowToItem } from "@/lib/items-mapper";
 import type { LeisureItem } from "@/lib/types";
+
+const INSERT_CHUNK_SIZE = 50;
 
 export async function countUserItems(): Promise<number> {
   const profile = await getOrCreateProfile();
@@ -27,49 +29,25 @@ export async function listUserItems(): Promise<LeisureItem[]> {
 export async function replaceUserItems(items: LeisureItem[]): Promise<LeisureItem[]> {
   const profile = await getOrCreateProfile();
   const db = getDb();
+  const normalized = normalizeItemsForSave(items);
 
-  return db.transaction(async (tx) => {
-    if (items.length === 0) {
-      const [existing] = await tx
-        .select({ value: count() })
-        .from(leisureItems)
-        .where(eq(leisureItems.userId, profile.id));
+  if (normalized.length === 0) {
+    const existing = await listUserItems();
+    if (existing.length > 0) return existing;
+    return [];
+  }
 
-      if ((existing?.value ?? 0) > 0) {
-        const rows = await tx.query.leisureItems.findMany({
-          where: eq(leisureItems.userId, profile.id),
-        });
-        return rows.map(rowToItem);
-      }
+  const rows = normalized.map((item) => itemToInsertRow(item, profile.id));
+  const chunks: (typeof rows)[] = [];
+  for (let i = 0; i < rows.length; i += INSERT_CHUNK_SIZE) {
+    chunks.push(rows.slice(i, i + INSERT_CHUNK_SIZE));
+  }
 
-      return [];
-    }
+  // neon-http has no interactive transactions — use Neon's batch API instead.
+  await db.batch([
+    db.delete(leisureItems).where(eq(leisureItems.userId, profile.id)),
+    ...chunks.map((chunk) => db.insert(leisureItems).values(chunk)),
+  ]);
 
-    await tx.delete(leisureItems).where(eq(leisureItems.userId, profile.id));
-
-    const inserted = await tx
-      .insert(leisureItems)
-      .values(
-        items.map((item) => ({
-          id: item.id,
-          userId: profile.id,
-          type: item.type,
-          title: item.title,
-          subtitle: item.subtitle ?? null,
-          imageUrl: item.imageUrl ?? null,
-          watchUrl: item.watchUrl ?? null,
-          notes: item.notes ?? null,
-          originalTitle: item.originalTitle ?? null,
-          status: item.status,
-          year: item.year ?? null,
-          rating: item.rating ?? null,
-          progress: item.progress ?? null,
-          order: item.order ?? null,
-          createdAt: new Date(item.createdAt),
-        })),
-      )
-      .returning();
-
-    return inserted.map(rowToItem);
-  });
+  return listUserItems();
 }

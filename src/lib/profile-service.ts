@@ -65,6 +65,15 @@ export async function getFollowerCount(userId: string): Promise<number> {
   return row?.value ?? 0;
 }
 
+export async function getFollowingCount(userId: string): Promise<number> {
+  const db = getDb();
+  const [row] = await db
+    .select({ value: count() })
+    .from(follows)
+    .where(eq(follows.followerId, userId));
+  return row?.value ?? 0;
+}
+
 export async function isFollowing(followerId: string, followingId: string): Promise<boolean> {
   const db = getDb();
   const row = await db.query.follows.findFirst({
@@ -79,6 +88,43 @@ export async function listPublicItems(userId: string) {
     where: eq(leisureItems.userId, userId),
   });
   return rows.map(rowToItem);
+}
+
+export async function listFollowing(followerId: string, options?: { publicOnly?: boolean }) {
+  const db = getDb();
+  const conditions = [eq(follows.followerId, followerId)];
+  if (options?.publicOnly) conditions.push(eq(profiles.isPublic, true));
+
+  const rows = await db
+    .select({
+      id: profiles.id,
+      name: profiles.name,
+      username: profiles.username,
+      bio: profiles.bio,
+      imageUrl: profiles.imageUrl,
+    })
+    .from(follows)
+    .innerJoin(profiles, eq(follows.followingId, profiles.id))
+    .where(and(...conditions));
+
+  return rows.filter((row) => row.username);
+}
+
+export async function listFollowers(followingId: string) {
+  const db = getDb();
+  const rows = await db
+    .select({
+      id: profiles.id,
+      name: profiles.name,
+      username: profiles.username,
+      bio: profiles.bio,
+      imageUrl: profiles.imageUrl,
+    })
+    .from(follows)
+    .innerJoin(profiles, eq(follows.followerId, profiles.id))
+    .where(and(eq(follows.followingId, followingId), eq(profiles.isPublic, true)));
+
+  return rows.filter((row) => row.username);
 }
 
 export async function followUser(followerId: string, followingId: string) {

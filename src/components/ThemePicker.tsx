@@ -17,7 +17,7 @@ export function ThemePicker({ onSelect, compact = false }: ThemePickerProps) {
   };
 
   return (
-    <div className={compact ? "flex flex-wrap gap-2" : "grid grid-cols-3 gap-2 sm:grid-cols-6"}>
+    <div className={compact ? "flex flex-wrap gap-2" : "grid grid-cols-4 gap-2 sm:grid-cols-4"}>
       {THEMES.map((t) => (
         <button
           key={t.id}

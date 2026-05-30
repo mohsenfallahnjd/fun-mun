@@ -19,6 +19,7 @@ export function LeisureApp() {
     syncing,
     cloudEnabled,
     isSignedIn,
+    sessionReady,
     addItem,
     updateItem,
     removeItem,
@@ -120,7 +121,7 @@ export function LeisureApp() {
           </p>
         )}
 
-        {!isSignedIn && (
+        {sessionReady && !isSignedIn && (
           <p className="-mt-2 rounded-xl border border-border bg-surface/80 px-3 py-2 text-xs text-muted sm:-mt-4 sm:px-4 sm:text-sm">
             Sign in to save your list to the cloud. Guest data stays in this browser only.
           </p>

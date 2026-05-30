@@ -1,11 +1,13 @@
 import type { CSSProperties } from "react";
 
-const ACCENT = "#b85c38";
-const ACCENT_DARK = "#8f4528";
+export const APP_ICON_BG = "#FFFFFF";
+export const APP_ICON_MARK = "#0A0A0A";
+/** Browser theme bar — matches app accent */
+export const APP_ICON_ACCENT = "#2563EB";
 
 export function AppIconImage({ size }: { size: number }) {
   const radius = Math.round(size * 0.24);
-  const iconSize = Math.round(size * 0.46);
+  const mark = Math.round(size * 0.48);
 
   const container: CSSProperties = {
     width: size,
@@ -13,21 +15,21 @@ export function AppIconImage({ size }: { size: number }) {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    background: `linear-gradient(145deg, ${ACCENT} 0%, ${ACCENT_DARK} 100%)`,
+    background: APP_ICON_BG,
     borderRadius: radius,
   };
 
   return (
     <div style={container}>
       <svg
-        width={iconSize}
-        height={iconSize}
+        width={mark}
+        height={mark}
         viewBox="0 0 24 24"
-        fill="white"
+        fill={APP_ICON_MARK}
         role="img"
         aria-label="Fun Mun"
       >
-        <path d="M6 2a2 2 0 0 0-2 2v18l8-4.5 8 4.5V4a2 2 0 0 0-2-2H6z" />
+        <path d="M7 3h10a1.5 1.5 0 0 1 1.5 1.5V20l-6.5-3-6.5 3V4.5A1.5 1.5 0 0 1 7 3z" />
       </svg>
     </div>
   );

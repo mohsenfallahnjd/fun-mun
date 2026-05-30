@@ -4,6 +4,7 @@ import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { SerwistProvider } from "@/components/SerwistProvider";
 import { SessionProvider } from "@/components/SessionProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { APP_ICON_ACCENT } from "@/lib/app-icon";
 import "./globals.css";
 
 const APP_NAME = "Fun Mun";
@@ -33,8 +34,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#b85c38" },
-    { media: "(prefers-color-scheme: dark)", color: "#12100e" },
+    { media: "(prefers-color-scheme: light)", color: APP_ICON_ACCENT },
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
   ],
   userScalable: false,
   viewportFit: "cover",

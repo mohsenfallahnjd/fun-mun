@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import {
   getFollowerCount,
+  getFollowingCount,
   getProfileByUsername,
   isFollowing,
   listPublicItems,
@@ -25,6 +26,7 @@ export async function GET(_request: Request, context: RouteContext) {
     const session = await auth();
     const items = await listPublicItems(profile.id);
     const followerCount = await getFollowerCount(profile.id);
+    const followingCount = await getFollowingCount(profile.id);
     const following =
       session?.user?.id && session.user.id !== profile.id
         ? await isFollowing(session.user.id, profile.id)
@@ -38,6 +40,7 @@ export async function GET(_request: Request, context: RouteContext) {
         bio: profile.bio,
         imageUrl: profile.imageUrl,
         followerCount,
+        followingCount,
         itemCount: items.length,
         isOwn: session?.user?.id === profile.id,
       },

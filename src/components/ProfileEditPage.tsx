@@ -11,6 +11,7 @@ import { AppHeader } from "@/components/SiteNav";
 import { ThemePicker } from "@/components/ThemePicker";
 import { useTheme } from "@/components/ThemeProvider";
 import { fetchProfile, patchProfile } from "@/lib/profile-client";
+import { shareUserProfile } from "@/lib/share-profile";
 import { loadLocalProfile, saveLocalProfile } from "@/lib/theme-storage";
 import type { ThemeId } from "@/lib/themes";
 
@@ -116,12 +117,9 @@ export function ProfileEditPage() {
       setError("Set a username before sharing your profile.");
       return;
     }
-    const url = `${window.location.origin}/u/${slug}`;
-    if (navigator.share) {
-      await navigator.share({ title: `@${slug} on Fun Mun`, url });
-    } else {
-      await navigator.clipboard.writeText(url);
-      setMessage("Profile link copied!");
+    const result = await shareUserProfile({ username: slug, name: name.trim() || profile?.name });
+    if (result === "copied") {
+      setMessage("Link copied — spread the leisure!");
     }
   };
 

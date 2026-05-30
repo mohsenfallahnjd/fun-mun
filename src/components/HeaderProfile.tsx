@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Loader2, User } from "@/components/icons";
 import { Link } from "@/components/Link";
 import { fetchProfile } from "@/lib/profile-client";
@@ -10,7 +10,12 @@ import { loadLocalProfile } from "@/lib/theme-storage";
 
 function useProfileNav() {
   const { data: session, status } = useSession();
-  const isSignedIn = status === "authenticated";
+  const signedInRef = useRef(false);
+
+  if (status === "authenticated") signedInRef.current = true;
+  if (status === "unauthenticated") signedInRef.current = false;
+
+  const isSignedIn = status === "authenticated" || (status === "loading" && signedInRef.current);
   const isLoaded = status !== "loading";
   const [displayName, setDisplayName] = useState("Profile");
 
