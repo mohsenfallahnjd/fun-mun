@@ -2,13 +2,14 @@
 
 import { Image } from "@/components/Image";
 import { ItemTitle } from "@/components/ItemTitle";
-import { ExternalLink, GripVertical, Pencil, Trash2 } from "@/components/icons";
+import { ExternalLink, GripVertical, Pencil, Share2, Trash2 } from "@/components/icons";
 import { Link } from "@/components/Link";
 import { RatingBadge } from "@/components/RatingBadge";
 import { StatusPicker } from "@/components/StatusPicker";
 import { TypeAvatar } from "@/components/TypeAvatar";
 import { TypeBadge } from "@/components/TypeBadge";
 import { formatProgress } from "@/lib/progress";
+import { shareLeisureItem } from "@/lib/share-item";
 import { type LeisureItem, type LeisureStatus, STATUS_CARD_CLASS } from "@/lib/types";
 
 interface LeisureCardProps {
@@ -130,6 +131,14 @@ export function LeisureCard({
           {item.rating && <RatingBadge rating={item.rating} variant="inline" />}
 
           <div className="ml-auto flex gap-1">
+            <button
+              type="button"
+              onClick={() => void shareLeisureItem(item)}
+              className="rounded-lg p-1.5 text-muted transition-all hover:bg-muted/60 hover:text-foreground"
+              aria-label="Share"
+            >
+              <Share2 className="h-3.5 w-3.5" />
+            </button>
             <button
               type="button"
               onClick={() => onEdit(item)}
