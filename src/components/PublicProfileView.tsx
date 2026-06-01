@@ -17,8 +17,14 @@ import {
   invalidatePublicProfileCache,
 } from "@/lib/profile-client";
 import type { ProfileSummary } from "@/lib/profile-types";
+import { formatProgress } from "@/lib/progress";
 import { shareUserProfile } from "@/lib/share-profile";
-import type { LeisureType } from "@/lib/types";
+import {
+  type LeisureProgress,
+  type LeisureStatus,
+  type LeisureType,
+  STATUS_CARD_CLASS,
+} from "@/lib/types";
 
 type ProfileTab = "list" | "followers" | "following";
 
@@ -39,8 +45,9 @@ interface PublicItem {
   title: string;
   subtitle?: string;
   imageUrl?: string;
-  status: string;
+  status: LeisureStatus;
   year?: number;
+  progress?: LeisureProgress;
 }
 
 export function PublicProfileView() {
@@ -182,54 +189,38 @@ export function PublicProfileView() {
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6">
       <AppHeader />
 
-      <header className="rounded-3xl border border-border bg-surface p-6">
-        <div className="flex items-start gap-4">
-          {profile.imageUrl ? (
-            <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full ring-2 ring-border">
-              <Image
-                src={profile.imageUrl}
-                alt=""
-                fill
-                className="object-cover"
-                sizes="80px"
-                unoptimized
-              />
+      <header className="rounded-3xl border border-border bg-surface p-5 sm:p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+          <div className="flex items-start gap-4">
+            {profile.imageUrl ? (
+              <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full ring-2 ring-border sm:h-20 sm:w-20">
+                <Image
+                  src={profile.imageUrl}
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="80px"
+                  unoptimized
+                />
+              </div>
+            ) : (
+              <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-accent/15 text-xl font-bold text-accent ring-2 ring-border sm:h-20 sm:w-20 sm:text-2xl">
+                {avatarInitial}
+              </span>
+            )}
+            <div className="min-w-0 flex-1">
+              <h1 className="truncate text-xl font-bold sm:text-2xl">
+                {profile.name ?? profile.username}
+              </h1>
+              <p className="truncate text-muted">@{profile.username}</p>
             </div>
-          ) : (
-            <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-accent/15 text-2xl font-bold text-accent ring-2 ring-border">
-              {avatarInitial}
-            </span>
-          )}
-          <div className="min-w-0 flex-1">
-            <h1 className="text-2xl font-bold">{profile.name ?? profile.username}</h1>
-            <p className="text-muted">@{profile.username}</p>
-            {profile.bio && <p className="mt-3 text-sm leading-relaxed">{profile.bio}</p>}
-            <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted">
-              <span>{profile.itemCount} items</span>
-              <button
-                type="button"
-                onClick={() => setTab("followers")}
-                className="hover:text-foreground"
-              >
-                <span className="font-semibold text-foreground">{profile.followerCount}</span>{" "}
-                followers
-              </button>
-              <button
-                type="button"
-                onClick={() => setTab("following")}
-                className="hover:text-foreground"
-              >
-                <span className="font-semibold text-foreground">{profile.followingCount}</span>{" "}
-                following
-              </button>
-            </div>
-            {shareMessage && <p className="mt-2 text-sm font-medium text-accent">{shareMessage}</p>}
           </div>
-          <div className="flex shrink-0 gap-2">
+
+          <div className="flex w-full flex-wrap gap-2 sm:ml-auto sm:w-auto sm:shrink-0">
             <button
               type="button"
               onClick={share}
-              className="rounded-xl border border-border p-2.5 text-muted hover:bg-muted/40"
+              className="inline-flex flex-1 items-center justify-center rounded-xl border border-border p-2.5 text-muted hover:bg-muted/40 sm:flex-none"
               title="Share profile"
             >
               <Share2 className="h-4 w-4" />
@@ -237,7 +228,7 @@ export function PublicProfileView() {
             {profile.isOwn ? (
               <Link
                 href="/profile/edit"
-                className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2 text-sm font-medium no-underline hover:bg-muted/40"
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-border px-4 py-2 text-sm font-medium no-underline hover:bg-muted/40 sm:flex-none"
               >
                 <Pencil className="h-4 w-4" />
                 Edit profile
@@ -247,7 +238,7 @@ export function PublicProfileView() {
                 type="button"
                 onClick={toggleFollow}
                 disabled={followLoading}
-                className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground hover:brightness-110 disabled:opacity-50"
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground hover:brightness-110 disabled:opacity-50 sm:flex-none"
               >
                 {following ? (
                   <>
@@ -264,6 +255,28 @@ export function PublicProfileView() {
             )}
           </div>
         </div>
+
+        {profile.bio && <p className="mt-4 text-sm leading-relaxed">{profile.bio}</p>}
+
+        <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted">
+          <span>{profile.itemCount} items</span>
+          <button
+            type="button"
+            onClick={() => setTab("followers")}
+            className="hover:text-foreground"
+          >
+            <span className="font-semibold text-foreground">{profile.followerCount}</span> followers
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab("following")}
+            className="hover:text-foreground"
+          >
+            <span className="font-semibold text-foreground">{profile.followingCount}</span>{" "}
+            following
+          </button>
+        </div>
+        {shareMessage && <p className="mt-2 text-sm font-medium text-accent">{shareMessage}</p>}
       </header>
 
       <div className="flex flex-wrap gap-2">
@@ -284,32 +297,46 @@ export function PublicProfileView() {
             <p className="text-sm text-muted">No items yet.</p>
           ) : (
             <ul className="flex flex-col gap-3">
-              {items.map((item) => (
-                <li
-                  key={item.id}
-                  className="flex gap-3 rounded-2xl border border-border bg-surface p-4"
-                >
-                  <div className="relative h-20 w-14 shrink-0 overflow-hidden rounded-xl">
-                    {item.imageUrl ? (
-                      <Image
-                        src={item.imageUrl}
-                        alt={item.title}
-                        fill
-                        className="object-cover"
-                        sizes="56px"
-                        unoptimized
-                      />
-                    ) : (
-                      <TypeAvatar type={item.type} />
-                    )}
-                  </div>
-                  <div className="min-w-0">
-                    <TypeBadge type={item.type} />
-                    <p className="mt-1 font-semibold">{item.title}</p>
-                    {item.subtitle && <p className="text-sm text-muted">{item.subtitle}</p>}
-                  </div>
-                </li>
-              ))}
+              {items.map((item) => {
+                const itemHref = `/u/${username}/items/${item.id}`;
+                const progressLabel = formatProgress({ ...item, createdAt: "" });
+
+                return (
+                  <li key={item.id}>
+                    <Link
+                      href={itemHref}
+                      className={`flex gap-3 rounded-2xl border p-4 no-underline transition hover:shadow-md ${STATUS_CARD_CLASS[item.status as LeisureStatus]}`}
+                    >
+                      <div className="relative h-20 w-14 shrink-0 overflow-hidden rounded-xl">
+                        {item.imageUrl ? (
+                          <Image
+                            src={item.imageUrl}
+                            alt={item.title}
+                            fill
+                            className="object-cover"
+                            sizes="56px"
+                            unoptimized
+                          />
+                        ) : (
+                          <TypeAvatar type={item.type} />
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <TypeBadge type={item.type} />
+                        <p className="mt-1 truncate font-semibold text-foreground">{item.title}</p>
+                        {item.subtitle && (
+                          <p className="truncate text-sm text-muted">{item.subtitle}</p>
+                        )}
+                        {progressLabel && (
+                          <p className="mt-1 inline-flex rounded-lg bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">
+                            {progressLabel}
+                          </p>
+                        )}
+                      </div>
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </section>

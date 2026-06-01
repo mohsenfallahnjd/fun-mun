@@ -1,4 +1,13 @@
-import { BookOpen, Film, Gamepad2, Headphones, MapPin, Mic, Tv } from "@/components/icons";
+import {
+  BookOpen,
+  FileText,
+  Film,
+  Gamepad2,
+  Headphones,
+  MapPin,
+  Mic,
+  Tv,
+} from "@/components/icons";
 import type { LeisureType } from "@/lib/types";
 import { getTypeLabel, TYPE_COLORS } from "@/lib/types";
 
@@ -28,6 +37,8 @@ export function TypeIcon({
       return <Gamepad2 {...props} />;
     case "place":
       return <MapPin {...props} />;
+    case "article":
+      return <FileText {...props} />;
   }
 }
 

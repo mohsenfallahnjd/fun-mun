@@ -174,6 +174,7 @@ export function LeisureApp() {
                   draggable={canDrag}
                   isDragOver={dragOverId === item.id && dragId !== item.id}
                   onStatusChange={setStatus}
+                  onProgressAdvance={(id, progress) => updateItem(id, { progress })}
                   onEdit={setEditingItem}
                   onRemove={removeItem}
                   onDragStart={setDragId}

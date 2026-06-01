@@ -27,6 +27,8 @@
   --tag-game-bg: rgb(74 92 140 / 0.14);
   --tag-place: #3d6b45;
   --tag-place-bg: rgb(61 107 69 / 0.14);
+  --tag-article: #475569;
+  --tag-article-bg: rgb(71 85 105 / 0.14);
 
   --success: #3d6b45;
   --shadow: rgb(15 23 42 / 0.06);
@@ -71,6 +73,8 @@
     --tag-game-bg: rgb(143 164 212 / 0.16);
     --tag-place: #7cb883;
     --tag-place-bg: rgb(124 184 131 / 0.16);
+    --tag-article: #94a3b8;
+    --tag-article-bg: rgb(148 163 184 / 0.16);
 
     --success: #7cb883;
     --shadow: rgb(0 0 0 / 0.25);

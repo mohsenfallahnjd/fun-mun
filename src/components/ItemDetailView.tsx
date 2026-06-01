@@ -5,14 +5,16 @@ import { useState } from "react";
 import { Image } from "@/components/Image";
 import { type ItemDraft, ItemForm } from "@/components/ItemForm";
 import { ItemTitle } from "@/components/ItemTitle";
-import { ArrowLeft, ExternalLink, Pencil, Share2, Trash2 } from "@/components/icons";
+import { ArrowLeft, BookOpen, ExternalLink, Pencil, Share2, Trash2 } from "@/components/icons";
 import { Link } from "@/components/Link";
 import { RatingBadge } from "@/components/RatingBadge";
 import { StatusPicker } from "@/components/StatusPicker";
 import { TypeAvatar } from "@/components/TypeAvatar";
 import { TypeBadge } from "@/components/TypeBadge";
 import { useLeisureItems } from "@/hooks/useLeisureItems";
+import { useProfileUsername } from "@/hooks/useProfileUsername";
 import { formatProgress } from "@/lib/progress";
+import { readPageHref } from "@/lib/public-item-types";
 import { shareLeisureItem } from "@/lib/share-item";
 import { getTypeLabel, STATUS_CARD_CLASS } from "@/lib/types";
 
@@ -21,6 +23,7 @@ export function ItemDetailView() {
   const router = useRouter();
   const id = params.id as string;
   const { items, ready, setStatus, removeItem, updateItem } = useLeisureItems();
+  const username = useProfileUsername();
   const [editing, setEditing] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
 
@@ -60,12 +63,15 @@ export function ItemDetailView() {
   };
 
   const handleShare = async () => {
-    const result = await shareLeisureItem(item);
+    const result = await shareLeisureItem(item, username ? { username } : undefined);
     if (result === "copied") {
       setShareMessage("Link copied — share the leisure!");
       setTimeout(() => setShareMessage(""), 3000);
     }
   };
+
+  const canReadInApp = item.type === "article" && Boolean(item.watchUrl);
+  const readHref = item.watchUrl ? readPageHref(item.watchUrl, `/items/${item.id}`) : null;
 
   return (
     <>
@@ -159,7 +165,16 @@ export function ItemDetailView() {
               <p className="text-xs font-semibold uppercase tracking-wider text-muted">Actions</p>
               {shareMessage && <p className="text-sm font-medium text-accent">{shareMessage}</p>}
               <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
-                {item.watchUrl && (
+                {canReadInApp && readHref && (
+                  <Link
+                    href={readHref}
+                    className="flex w-full items-center justify-center gap-2 border-b border-border bg-accent px-4 py-3.5 text-sm font-semibold text-accent-foreground no-underline transition hover:brightness-110"
+                  >
+                    <BookOpen className="h-4 w-4" />
+                    Read in app
+                  </Link>
+                )}
+                {item.watchUrl && !canReadInApp && (
                   <Link
                     href={item.watchUrl}
                     target="_blank"

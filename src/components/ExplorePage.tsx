@@ -11,10 +11,10 @@ import { AppHeader } from "@/components/SiteNav";
 import { TypeAvatar } from "@/components/TypeAvatar";
 import { TypeBadge } from "@/components/TypeBadge";
 import { useLeisureItems } from "@/hooks/useLeisureItems";
+import type { ExploreLeisureType } from "@/lib/explore-catalog";
 import { exploreItemPath } from "@/lib/explore-catalog";
 import { fetchExploreSections } from "@/lib/explore-client";
 import type { ExploreItem, ExploreSection } from "@/lib/explore-service";
-import type { LeisureType } from "@/lib/types";
 
 function ExploreCard({
   type,
@@ -22,7 +22,7 @@ function ExploreCard({
   onAdd,
   added,
 }: {
-  type: LeisureType;
+  type: ExploreLeisureType;
   item: ExploreItem;
   onAdd: () => void;
   added: boolean;
@@ -117,7 +117,7 @@ export function ExplorePage() {
     return () => controller.abort();
   }, []);
 
-  const handleAdd = (type: LeisureType, item: ExploreItem) => {
+  const handleAdd = (type: ExploreLeisureType, item: ExploreItem) => {
     const key = `${type}:${item.id}`;
     if (addedKeys.has(key) || items.some((i) => i.type === type && i.title === item.title)) {
       setAddedKeys((s) => new Set(s).add(key));

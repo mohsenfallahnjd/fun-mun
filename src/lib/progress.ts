@@ -45,6 +45,55 @@ export function progressFieldsForType(type: LeisureType): {
   };
 }
 
+export function canAdvanceProgress(item: LeisureItem): boolean {
+  if (item.status !== "active") return false;
+  const fields = progressFieldsForType(item.type);
+  return fields.pages || fields.episode || fields.time;
+}
+
+export function nextProgressLabel(item: LeisureItem): string {
+  switch (item.type) {
+    case "book":
+    case "audiobook":
+      return "Next page";
+    case "series":
+    case "podcast":
+      return "Next ep";
+    case "movie":
+      return "+15 min";
+    default:
+      return "Next";
+  }
+}
+
+export function advanceProgress(item: LeisureItem): LeisureProgress | null {
+  const fields = progressFieldsForType(item.type);
+  const p: LeisureProgress = { ...item.progress };
+
+  if (fields.pages) {
+    p.page = (p.page ?? 0) + 1;
+    return p;
+  }
+
+  if (fields.episode) {
+    if (p.season != null || p.episode != null) {
+      p.season = p.season ?? 1;
+      p.episode = (p.episode ?? 0) + 1;
+    } else {
+      p.season = 1;
+      p.episode = 1;
+    }
+    return p;
+  }
+
+  if (fields.time) {
+    p.watchedMinutes = (p.watchedMinutes ?? 0) + 15;
+    return p;
+  }
+
+  return null;
+}
+
 export function emptyProgress(): LeisureProgress {
   return {};
 }

@@ -2,6 +2,7 @@ import { and, count, eq, ilike, ne, or, type SQL } from "drizzle-orm";
 import { getDb } from "@/db";
 import { follows, leisureItems, profiles } from "@/db/schema";
 import { rowToItem } from "@/lib/items-mapper";
+import type { LeisureItem } from "@/lib/types";
 
 export function slugifyUsername(input: string): string {
   const slug = input
@@ -88,6 +89,22 @@ export async function listPublicItems(userId: string) {
     where: eq(leisureItems.userId, userId),
   });
   return rows.map(rowToItem);
+}
+
+export async function getPublicItem(
+  username: string,
+  itemId: string,
+): Promise<{ profile: typeof profiles.$inferSelect; item: LeisureItem } | null> {
+  const profile = await getProfileByUsername(username);
+  if (!profile?.isPublic || !profile.username) return null;
+
+  const db = getDb();
+  const row = await db.query.leisureItems.findFirst({
+    where: and(eq(leisureItems.userId, profile.id), eq(leisureItems.id, itemId)),
+  });
+
+  if (!row) return null;
+  return { profile, item: rowToItem(row) };
 }
 
 export async function listFollowing(followerId: string, options?: { publicOnly?: boolean }) {

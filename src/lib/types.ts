@@ -1,4 +1,12 @@
-export type LeisureType = "book" | "audiobook" | "podcast" | "movie" | "series" | "place" | "game";
+export type LeisureType =
+  | "book"
+  | "audiobook"
+  | "podcast"
+  | "movie"
+  | "series"
+  | "place"
+  | "game"
+  | "article";
 
 export type LeisureStatus = "queue" | "active" | "done";
 
@@ -85,6 +93,7 @@ export const LEISURE_TYPES: {
   { value: "series", label: "Series", labelFa: "سریال" },
   { value: "game", label: "Game", labelFa: "بازی" },
   { value: "place", label: "Place", labelFa: "مکان" },
+  { value: "article", label: "Article", labelFa: "مقاله" },
 ];
 
 export const TYPE_COLORS: Record<LeisureType, string> = {
@@ -95,6 +104,7 @@ export const TYPE_COLORS: Record<LeisureType, string> = {
   series: "bg-[var(--tag-series-bg)] text-[var(--tag-series)]",
   game: "bg-[var(--tag-game-bg)] text-[var(--tag-game)]",
   place: "bg-[var(--tag-place-bg)] text-[var(--tag-place)]",
+  article: "bg-[var(--tag-article-bg)] text-[var(--tag-article)]",
 };
 
 export function getTypeLabel(type: LeisureType): string {

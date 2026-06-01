@@ -32,6 +32,11 @@ export function openLibraryRating(average?: number | null): ContentRating | unde
   return { value: average, max: 5, source: "Open Library" };
 }
 
+export function googleBooksRating(average?: number | null): ContentRating | undefined {
+  if (average == null || average <= 0) return undefined;
+  return { value: average, max: 5, source: "Google Books" };
+}
+
 export function itunesRating(average?: number | null): ContentRating | undefined {
   if (average == null || average <= 0) return undefined;
   return { value: average, max: 5, source: "Apple" };

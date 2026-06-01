@@ -2,9 +2,23 @@ import { getTypeLabel, type LeisureItem, STATUS_OPTIONS } from "@/lib/types";
 
 export type ShareItemResult = "shared" | "copied" | "cancelled";
 
+export interface ShareItemOptions {
+  username?: string;
+}
+
 export function leisureItemPageUrl(id: string, origin?: string) {
   const base = origin ?? (typeof window !== "undefined" ? window.location.origin : "");
   return `${base}/items/${id}`;
+}
+
+export function publicItemPageUrl(username: string, itemId: string, origin?: string) {
+  const base = origin ?? (typeof window !== "undefined" ? window.location.origin : "");
+  return `${base}/u/${encodeURIComponent(username)}/items/${itemId}`;
+}
+
+export function resolveItemShareUrl(item: LeisureItem, options?: ShareItemOptions) {
+  if (options?.username) return publicItemPageUrl(options.username, item.id);
+  return leisureItemPageUrl(item.id);
 }
 
 export function leisureItemShareTitle(item: Pick<LeisureItem, "title">) {
@@ -25,28 +39,30 @@ export function leisureItemShareText(
   return text;
 }
 
-function clipboardPayload(item: LeisureItem, itemPageUrl: string): string {
+function clipboardPayload(item: LeisureItem, pageUrl: string): string {
   const text = leisureItemShareText(item);
   const lines = [text, ""];
 
-  if (item.watchUrl && item.watchUrl !== itemPageUrl) {
-    lines.push(item.watchUrl, "", `Fun Mun: ${itemPageUrl}`);
+  if (item.watchUrl && item.watchUrl !== pageUrl) {
+    lines.push(`Original link: ${item.watchUrl}`, "", pageUrl);
   } else {
-    lines.push(itemPageUrl);
+    lines.push(pageUrl);
   }
 
   return lines.join("\n");
 }
 
-export async function shareLeisureItem(item: LeisureItem): Promise<ShareItemResult> {
-  const pageUrl = leisureItemPageUrl(item.id);
+export async function shareLeisureItem(
+  item: LeisureItem,
+  options?: ShareItemOptions,
+): Promise<ShareItemResult> {
+  const pageUrl = resolveItemShareUrl(item, options);
   const title = leisureItemShareTitle(item);
   const text = leisureItemShareText(item);
-  const shareUrl = item.watchUrl ?? pageUrl;
 
   if (typeof navigator !== "undefined" && navigator.share) {
     try {
-      await navigator.share({ title, text, url: shareUrl });
+      await navigator.share({ title, text, url: pageUrl });
       return "shared";
     } catch (err) {
       if (err instanceof Error && err.name === "AbortError") return "cancelled";

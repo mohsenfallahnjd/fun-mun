@@ -1,4 +1,5 @@
 import { isNumericId, normalizeExploreId, parseItunesId, parseProviderId } from "./explore-id";
+import type { ExploreLeisureType } from "./explore-catalog";
 import type { ContentRating } from "./rating";
 import { itunesRating, openLibraryRating, rawgRating, tmdbRating, tvmazeRating } from "./rating";
 import { searchGamesWikipedia } from "./search-games";
@@ -30,7 +31,7 @@ export interface ExplorePageResult {
 }
 
 export interface ExploreSection {
-  type: LeisureType;
+  type: ExploreLeisureType;
   title: string;
   items: ExploreItem[];
 }

@@ -10,6 +10,7 @@ export {
   Compass,
   Download,
   ExternalLink,
+  FileText,
   Film,
   Gamepad2,
   GripVertical,

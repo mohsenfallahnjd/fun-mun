@@ -52,6 +52,7 @@ export async function GET(_request: Request, context: RouteContext) {
         imageUrl: item.imageUrl,
         status: item.status,
         year: item.year,
+        progress: item.progress,
       })),
       following,
     });

@@ -1,8 +1,10 @@
 import { normalizeExploreId } from "./explore-id";
 import type { LeisureType } from "./types";
 
+export type ExploreLeisureType = Exclude<LeisureType, "article">;
+
 export const EXPLORE_CATEGORY_META: Record<
-  LeisureType,
+  ExploreLeisureType,
   { title: string; description: string; source: string }
 > = {
   book: {
@@ -42,14 +44,14 @@ export const EXPLORE_CATEGORY_META: Record<
   },
 };
 
-export function parseExploreType(value: string): LeisureType | null {
-  return value in EXPLORE_CATEGORY_META ? (value as LeisureType) : null;
+export function parseExploreType(value: string): ExploreLeisureType | null {
+  return value in EXPLORE_CATEGORY_META ? (value as ExploreLeisureType) : null;
 }
 
-export function exploreItemPath(type: LeisureType, id: string): string {
+export function exploreItemPath(type: ExploreLeisureType, id: string): string {
   return `/explore/${type}/${encodeURIComponent(normalizeExploreId(id))}`;
 }
 
-export function exploreCategoryPath(type: LeisureType): string {
+export function exploreCategoryPath(type: ExploreLeisureType): string {
   return `/explore/${type}`;
 }

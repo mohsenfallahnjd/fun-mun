@@ -18,9 +18,9 @@ import {
 } from "@/lib/explore-catalog";
 import { fetchExploreCategoryPage, fetchExploreCategorySearch } from "@/lib/explore-client";
 import type { ExploreItem } from "@/lib/explore-service";
-import type { LeisureType } from "@/lib/types";
+import type { ExploreLeisureType } from "@/lib/explore-catalog";
 
-function GridCard({ type, item }: { type: LeisureType; item: ExploreItem }) {
+function GridCard({ type, item }: { type: ExploreLeisureType; item: ExploreItem }) {
   return (
     <Link
       href={exploreItemPath(type, item.id)}
@@ -75,7 +75,7 @@ function GridSkeleton() {
   );
 }
 
-const SEARCH_PLACEHOLDER: Record<LeisureType, string> = {
+const SEARCH_PLACEHOLDER: Record<ExploreLeisureType, string> = {
   book: "Search books by title or author…",
   audiobook: "Search audiobooks…",
   podcast: "Search podcasts…",
@@ -272,7 +272,7 @@ export function ExploreCategoryPage() {
   );
 }
 
-export function ExploreSectionLink({ type, title }: { type: LeisureType; title: string }) {
+export function ExploreSectionLink({ type, title }: { type: ExploreLeisureType; title: string }) {
   return (
     <Link
       href={exploreCategoryPath(type)}

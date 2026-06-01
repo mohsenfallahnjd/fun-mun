@@ -2,13 +2,27 @@
 
 import { Image } from "@/components/Image";
 import { ItemTitle } from "@/components/ItemTitle";
-import { ExternalLink, GripVertical, Pencil, Share2, Trash2 } from "@/components/icons";
+import {
+  ChevronRight,
+  ExternalLink,
+  GripVertical,
+  Pencil,
+  Share2,
+  Trash2,
+} from "@/components/icons";
 import { Link } from "@/components/Link";
 import { RatingBadge } from "@/components/RatingBadge";
 import { StatusPicker } from "@/components/StatusPicker";
 import { TypeAvatar } from "@/components/TypeAvatar";
 import { TypeBadge } from "@/components/TypeBadge";
-import { formatProgress } from "@/lib/progress";
+import { useProfileUsername } from "@/hooks/useProfileUsername";
+import {
+  advanceProgress,
+  canAdvanceProgress,
+  formatProgress,
+  nextProgressLabel,
+} from "@/lib/progress";
+import { readPageHref } from "@/lib/public-item-types";
 import { shareLeisureItem } from "@/lib/share-item";
 import { type LeisureItem, type LeisureStatus, STATUS_CARD_CLASS } from "@/lib/types";
 
@@ -17,6 +31,7 @@ interface LeisureCardProps {
   draggable?: boolean;
   isDragOver?: boolean;
   onStatusChange: (id: string, status: LeisureStatus) => void;
+  onProgressAdvance: (id: string, progress: NonNullable<LeisureItem["progress"]>) => void;
   onEdit: (item: LeisureItem) => void;
   onRemove: (id: string) => void;
   onDragStart?: (id: string) => void;
@@ -30,6 +45,7 @@ export function LeisureCard({
   draggable = false,
   isDragOver = false,
   onStatusChange,
+  onProgressAdvance,
   onEdit,
   onRemove,
   onDragStart,
@@ -37,8 +53,20 @@ export function LeisureCard({
   onDrop,
   onDragEnd,
 }: LeisureCardProps) {
+  const username = useProfileUsername();
   const progressLabel = formatProgress(item);
   const statusStyle = STATUS_CARD_CLASS[item.status];
+  const showNext = canAdvanceProgress(item);
+  const canRead = item.type === "article" && Boolean(item.watchUrl);
+
+  const handleShare = () => {
+    void shareLeisureItem(item, username ? { username } : undefined);
+  };
+
+  const handleNext = () => {
+    const next = advanceProgress(item);
+    if (next) onProgressAdvance(item.id, next);
+  };
 
   return (
     <article
@@ -115,7 +143,27 @@ export function LeisureCard({
         />
 
         <div className="flex flex-wrap items-center gap-2">
-          {item.watchUrl && (
+          {showNext && (
+            <button
+              type="button"
+              onClick={handleNext}
+              className="inline-flex items-center gap-1 rounded-lg bg-accent px-2.5 py-1 text-xs font-semibold text-accent-foreground transition hover:brightness-110"
+            >
+              {nextProgressLabel(item)}
+              <ChevronRight className="h-3.5 w-3.5" />
+            </button>
+          )}
+
+          {canRead && item.watchUrl && (
+            <Link
+              href={readPageHref(item.watchUrl, `/items/${item.id}`)}
+              className="inline-flex items-center gap-1 rounded-lg bg-muted/60 px-2.5 py-1 text-xs font-medium no-underline hover:bg-muted"
+            >
+              Read
+            </Link>
+          )}
+
+          {item.watchUrl && !canRead && (
             <Link
               href={item.watchUrl}
               target="_blank"
@@ -133,7 +181,7 @@ export function LeisureCard({
           <div className="ml-auto flex gap-1">
             <button
               type="button"
-              onClick={() => void shareLeisureItem(item)}
+              onClick={handleShare}
               className="rounded-lg p-1.5 text-muted transition-all hover:bg-muted/60 hover:text-foreground"
               aria-label="Share"
             >

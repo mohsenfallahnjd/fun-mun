@@ -1,5 +1,6 @@
 import type { ProfileSummary } from "@/lib/profile-types";
-import type { LeisureType } from "@/lib/types";
+import type { PublicItemPayload } from "@/lib/public-item-types";
+import type { LeisureProgress, LeisureStatus, LeisureType } from "@/lib/types";
 
 export interface ProfileResponse {
   id?: string;
@@ -32,8 +33,9 @@ export interface PublicProfilePayload {
     title: string;
     subtitle?: string;
     imageUrl?: string;
-    status: string;
+    status: LeisureStatus;
     year?: number;
+    progress?: LeisureProgress;
   }[];
   following: boolean;
 }
@@ -184,6 +186,19 @@ export async function fetchProfilePeople(
     force,
   );
   return data?.profiles ?? [];
+}
+
+export async function fetchPublicItem(
+  username: string,
+  itemId: string,
+  force = false,
+): Promise<PublicItemPayload | null> {
+  const slug = username.toLowerCase();
+  return fetchDeduped(
+    `public:${slug}:item:${itemId}`,
+    `/api/profiles/${encodeURIComponent(slug)}/items/${encodeURIComponent(itemId)}`,
+    force,
+  );
 }
 
 export async function patchProfile(body: Record<string, unknown>): Promise<Response> {
