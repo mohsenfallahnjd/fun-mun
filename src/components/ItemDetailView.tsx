@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 import { Image } from "@/components/Image";
 import { type ItemDraft, ItemForm } from "@/components/ItemForm";
@@ -11,6 +11,7 @@ import { RatingBadge } from "@/components/RatingBadge";
 import { StatusPicker } from "@/components/StatusPicker";
 import { TypeAvatar } from "@/components/TypeAvatar";
 import { TypeBadge } from "@/components/TypeBadge";
+import { useAppRouter } from "@/hooks/useAppRouter";
 import { useLeisureItems } from "@/hooks/useLeisureItems";
 import { useProfileUsername } from "@/hooks/useProfileUsername";
 import { formatProgress } from "@/lib/progress";
@@ -20,7 +21,7 @@ import { getTypeLabel, STATUS_CARD_CLASS } from "@/lib/types";
 
 export function ItemDetailView() {
   const params = useParams();
-  const router = useRouter();
+  const router = useAppRouter();
   const id = params.id as string;
   const { items, ready, setStatus, removeItem, updateItem } = useLeisureItems();
   const username = useProfileUsername();

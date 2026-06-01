@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Image } from "@/components/Image";
@@ -10,6 +9,7 @@ import { ListBackupSection } from "@/components/ListBackupSection";
 import { AppHeader } from "@/components/SiteNav";
 import { ThemePicker } from "@/components/ThemePicker";
 import { useTheme } from "@/components/ThemeProvider";
+import { useAppRouter } from "@/hooks/useAppRouter";
 import { fetchProfile, patchProfile } from "@/lib/profile-client";
 import { shareUserProfile } from "@/lib/share-profile";
 import { loadLocalProfile, saveLocalProfile } from "@/lib/theme-storage";
@@ -26,7 +26,7 @@ interface ProfileData {
 }
 
 export function ProfileEditPage() {
-  const router = useRouter();
+  const router = useAppRouter();
   const { status } = useSession();
   const { theme } = useTheme();
   const isSignedIn = status === "authenticated";

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { LeisureItemsProvider } from "@/components/LeisureItemsProvider";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
+import { NavigationProgress } from "@/components/NavigationProgress";
 import { SerwistProvider } from "@/components/SerwistProvider";
 import { SessionProvider } from "@/components/SessionProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -61,18 +62,20 @@ export default function RootLayout({
         </Script>
       </head>
       <body className="flex min-h-dvh flex-col text-foreground">
-        <SessionProvider>
-          <ThemeProvider>
-            <LeisureItemsProvider>
-              <SerwistProvider swUrl="/serwist/sw.js">
-                <div className="flex min-h-dvh flex-1 flex-col pb-[calc(4.25rem+env(safe-area-inset-bottom))] sm:pb-0">
-                  {children}
-                </div>
-                <MobileBottomNav />
-              </SerwistProvider>
-            </LeisureItemsProvider>
-          </ThemeProvider>
-        </SessionProvider>
+        <NavigationProgress>
+          <SessionProvider>
+            <ThemeProvider>
+              <LeisureItemsProvider>
+                <SerwistProvider swUrl="/serwist/sw.js">
+                  <div className="flex min-h-dvh flex-1 flex-col pb-[calc(4.25rem+env(safe-area-inset-bottom))] sm:pb-0">
+                    {children}
+                  </div>
+                  <MobileBottomNav />
+                </SerwistProvider>
+              </LeisureItemsProvider>
+            </ThemeProvider>
+          </SessionProvider>
+        </NavigationProgress>
       </body>
     </html>
   );

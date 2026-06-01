@@ -1,13 +1,13 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { Loader2 } from "@/components/icons";
 import { Link } from "@/components/Link";
+import { useAppRouter } from "@/hooks/useAppRouter";
 
 export function SignUpForm() {
-  const router = useRouter();
+  const router = useAppRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

@@ -83,8 +83,13 @@
 
 html {
   height: 100%;
-  height: -webkit-fill-available;
   background-color: var(--background);
+}
+
+@supports (-webkit-touch-callout: none) {
+  html {
+    height: -webkit-fill-available;
+  }
 }
 
 /* Fixed layer — iOS Safari breaks background-attachment: fixed in the notch area */
@@ -101,13 +106,18 @@ html::before {
 
 body {
   min-height: 100dvh;
-  min-height: -webkit-fill-available;
   padding-top: env(safe-area-inset-top, 0px);
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
   background: transparent;
   color: var(--foreground);
   font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+@supports (-webkit-touch-callout: none) {
+  body {
+    min-height: -webkit-fill-available;
+  }
 }
 
 .scrollbar-none {
@@ -145,4 +155,11 @@ body {
 
 [type="button"] {
   cursor: pointer;
+}
+
+/* Route change progress bar — above nav, respects notch */
+.bprogress {
+  z-index: 9999;
+  pointer-events: none;
+  top: env(safe-area-inset-top, 0px);
 }

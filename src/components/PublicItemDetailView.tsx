@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Image } from "@/components/Image";
@@ -21,6 +21,7 @@ import { RatingBadge } from "@/components/RatingBadge";
 import { StatusPicker } from "@/components/StatusPicker";
 import { TypeAvatar } from "@/components/TypeAvatar";
 import { TypeBadge } from "@/components/TypeBadge";
+import { useAppRouter } from "@/hooks/useAppRouter";
 import { useLeisureItems } from "@/hooks/useLeisureItems";
 import { fetchPublicItem } from "@/lib/profile-client";
 import { formatProgress } from "@/lib/progress";
@@ -31,7 +32,7 @@ import { getTypeLabel, type LeisureItem, STATUS_CARD_CLASS } from "@/lib/types";
 export function PublicItemDetailView() {
   const params = useParams();
   const pathname = usePathname();
-  const router = useRouter();
+  const router = useAppRouter();
   const username = params.username as string;
   const itemId = params.id as string;
   const { status } = useSession();
@@ -165,7 +166,6 @@ export function PublicItemDetailView() {
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 672px"
                 unoptimized
-                priority
               />
             ) : (
               <TypeAvatar
@@ -253,7 +253,9 @@ export function PublicItemDetailView() {
                     Open link
                   </Link>
                 )}
-                <div className="grid grid-cols-3 divide-x divide-border">
+                <div
+                  className={`grid divide-x divide-border ${isOwn ? "grid-cols-3" : "grid-cols-2"}`}
+                >
                   {!isOwn && (
                     <button
                       type="button"
