@@ -273,7 +273,7 @@ export function PublicItemDetailView() {
                     <Share2 className="h-4 w-4 text-muted" />
                     Share
                   </button>
-                  {isOwn ? (
+                  {!!isOwn && (
                     <>
                       <button
                         type="button"
@@ -292,13 +292,6 @@ export function PublicItemDetailView() {
                         Remove
                       </button>
                     </>
-                  ) : (
-                    <Link
-                      href={profileHref}
-                      className="flex flex-col items-center gap-1.5 px-3 py-3.5 text-sm font-medium text-foreground no-underline transition hover:bg-muted/30 sm:flex-row sm:justify-center"
-                    >
-                      View profile
-                    </Link>
                   )}
                 </div>
               </div>
