@@ -58,9 +58,10 @@ export function LeisureApp() {
 
   const canDrag = sortMode === "manual" && filter === "all";
 
-  const handleDrop = (overId: string) => {
-    if (dragId && dragId !== overId) {
-      reorderItems(dragId, overId);
+  const handleDrop = (overId: string, activeId?: string) => {
+    const from = activeId ?? dragId;
+    if (from && from !== overId) {
+      reorderItems(from, overId);
     }
     setDragId(null);
     setDragOverId(null);
@@ -134,7 +135,7 @@ export function LeisureApp() {
         />
 
         <section>
-          <div className="sticky top-0 z-20 -mx-4 bg-background/95 px-4 py-2 backdrop-blur-sm sm:static sm:mx-0 sm:bg-transparent sm:p-0">
+          <div className="sticky top-0 z-20 -mx-4 bg-background/70 px-4 py-2 backdrop-blur-md sm:static sm:mx-0 sm:bg-transparent sm:p-0">
             <ListToolbar
               filter={filter}
               onFilterChange={setFilter}
@@ -145,7 +146,9 @@ export function LeisureApp() {
           </div>
 
           {canDrag && sortMode === "manual" && (
-            <p className="text-xs text-muted">Drag cards to reorder.</p>
+            <p className="text-xs text-muted">
+              Press and hold the <span aria-hidden>⋮⋮</span> handle, then drag to reorder.
+            </p>
           )}
 
           {sortMode === "manual" && filter !== "all" && (
@@ -172,6 +175,7 @@ export function LeisureApp() {
                   key={item.id}
                   item={item}
                   draggable={canDrag}
+                  isDragging={dragId === item.id}
                   isDragOver={dragOverId === item.id && dragId !== item.id}
                   onStatusChange={setStatus}
                   onProgressAdvance={(id, progress) => updateItem(id, { progress })}

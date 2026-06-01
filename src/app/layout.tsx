@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { LeisureItemsProvider } from "@/components/LeisureItemsProvider";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { SerwistProvider } from "@/components/SerwistProvider";
@@ -54,12 +55,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full antialiased">
+      <head>
+        <Script id="theme-color-bootstrap" strategy="beforeInteractive">
+          {`(function(){try{var d=window.matchMedia("(prefers-color-scheme: dark)").matches;var c=d?"#09090b":"#f8fafc";document.documentElement.style.backgroundColor=c;document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.setAttribute("content",c);});}catch(e){}})();`}
+        </Script>
+      </head>
       <body className="flex min-h-dvh flex-col text-foreground">
         <SessionProvider>
           <ThemeProvider>
             <LeisureItemsProvider>
               <SerwistProvider swUrl="/serwist/sw.js">
-                <div className="flex min-h-dvh flex-1 flex-col pt-[env(safe-area-inset-top)] pb-[calc(4.25rem+env(safe-area-inset-bottom))] sm:pb-0">
+                <div className="flex min-h-dvh flex-1 flex-col pb-[calc(4.25rem+env(safe-area-inset-bottom))] sm:pb-0">
                   {children}
                 </div>
                 <MobileBottomNav />

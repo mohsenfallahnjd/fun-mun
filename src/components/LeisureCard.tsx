@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { Image } from "@/components/Image";
 import { ItemTitle } from "@/components/ItemTitle";
 import {
@@ -36,8 +37,9 @@ interface LeisureCardProps {
   onRemove: (id: string) => void;
   onDragStart?: (id: string) => void;
   onDragOver?: (id: string) => void;
-  onDrop?: (id: string) => void;
+  onDrop?: (overId: string, activeId?: string) => void;
   onDragEnd?: () => void;
+  isDragging?: boolean;
 }
 
 export function LeisureCard({
@@ -52,8 +54,10 @@ export function LeisureCard({
   onDragOver,
   onDrop,
   onDragEnd,
+  isDragging = false,
 }: LeisureCardProps) {
   const username = useProfileUsername();
+  const articleRef = useRef<HTMLElement>(null);
   const progressLabel = formatProgress(item);
   const statusStyle = STATUS_CARD_CLASS[item.status];
   const showNext = canAdvanceProgress(item);
@@ -68,11 +72,46 @@ export function LeisureCard({
     if (next) onProgressAdvance(item.id, next);
   };
 
+  const handleGripTouchStart = (e: React.TouchEvent<HTMLButtonElement>) => {
+    if (!draggable) return;
+    e.stopPropagation();
+    onDragStart?.(item.id);
+
+    const activeId = item.id;
+    let lastOverId = item.id;
+
+    const onTouchMove = (moveEvent: TouchEvent) => {
+      moveEvent.preventDefault();
+      const touch = moveEvent.touches[0];
+      if (!touch) return;
+
+      const el = document.elementFromPoint(touch.clientX, touch.clientY);
+      const card = el?.closest<HTMLElement>("[data-reorder-id]");
+      const overId = card?.dataset.reorderId;
+      if (overId) {
+        lastOverId = overId;
+        onDragOver?.(overId);
+      }
+    };
+
+    const onTouchEnd = () => {
+      document.removeEventListener("touchmove", onTouchMove);
+      document.removeEventListener("touchend", onTouchEnd);
+      document.removeEventListener("touchcancel", onTouchEnd);
+      onDrop?.(lastOverId, activeId);
+      onDragEnd?.();
+    };
+
+    document.addEventListener("touchmove", onTouchMove, { passive: false });
+    document.addEventListener("touchend", onTouchEnd);
+    document.addEventListener("touchcancel", onTouchEnd);
+  };
+
   return (
     <article
-      draggable={draggable}
+      ref={articleRef}
+      data-reorder-id={item.id}
       data-status={item.status}
-      onDragStart={() => onDragStart?.(item.id)}
       onDragOver={(e) => {
         e.preventDefault();
         onDragOver?.(item.id);
@@ -81,15 +120,29 @@ export function LeisureCard({
         e.preventDefault();
         onDrop?.(item.id);
       }}
-      onDragEnd={onDragEnd}
       className={`group flex gap-3 rounded-2xl border p-4 transition-all duration-200 hover:shadow-md ${statusStyle} ${
         isDragOver ? "border-accent ring-2 ring-accent/30" : ""
-      } ${draggable ? "cursor-grab active:cursor-grabbing" : ""}`}
+      } ${isDragging ? "scale-[0.98] opacity-60" : ""}`}
     >
       {draggable && (
-        <div className="flex shrink-0 items-center text-muted">
+        <button
+          type="button"
+          aria-label="Drag to reorder"
+          draggable
+          onDragStart={(e) => {
+            e.stopPropagation();
+            e.dataTransfer.effectAllowed = "move";
+            if (articleRef.current) {
+              e.dataTransfer.setDragImage(articleRef.current, 32, 32);
+            }
+            onDragStart?.(item.id);
+          }}
+          onDragEnd={onDragEnd}
+          onTouchStart={handleGripTouchStart}
+          className="-ml-1 flex shrink-0 touch-none select-none items-center self-stretch rounded-lg px-1.5 text-muted active:bg-muted/50"
+        >
           <GripVertical className="h-5 w-5" aria-hidden />
-        </div>
+        </button>
       )}
 
       <div className="relative h-24 w-16 shrink-0 overflow-hidden rounded-xl">

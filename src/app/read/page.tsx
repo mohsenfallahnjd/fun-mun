@@ -26,8 +26,8 @@ function ReaderContent() {
   const readerSrc = `/api/read?url=${encodeURIComponent(url)}`;
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background">
-      <header className="sticky top-0 z-10 flex items-center gap-2 border-b border-border bg-surface/95 px-4 py-3 backdrop-blur-sm">
+    <div className="flex min-h-dvh flex-col">
+      <header className="sticky top-0 z-10 flex items-center gap-2 border-b border-border bg-background/70 px-4 py-3 backdrop-blur-md">
         <Link
           href={back}
           className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium text-muted no-underline hover:bg-muted/40 hover:text-foreground"

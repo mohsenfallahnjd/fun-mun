@@ -82,18 +82,30 @@
 }
 
 html {
+  height: 100%;
+  height: -webkit-fill-available;
+  background-color: var(--background);
+}
+
+/* Fixed layer — iOS Safari breaks background-attachment: fixed in the notch area */
+html::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
   background-color: var(--background);
   background-image:
     radial-gradient(ellipse 90% 60% at 50% -10%, var(--accent-soft), transparent 70%),
     linear-gradient(180deg, var(--background) 0%, var(--background-subtle) 100%);
-  background-attachment: fixed;
-  min-height: 100dvh;
 }
 
 body {
-  background-color: transparent;
-  background-image: none;
   min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  background: transparent;
   color: var(--foreground);
   font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
