@@ -10,6 +10,7 @@ import { RatingBadge } from "@/components/RatingBadge";
 import { AppHeader } from "@/components/SiteNav";
 import { TypeAvatar } from "@/components/TypeAvatar";
 import { TypeBadge } from "@/components/TypeBadge";
+import type { ExploreLeisureType } from "@/lib/explore-catalog";
 import {
   EXPLORE_CATEGORY_META,
   exploreCategoryPath,
@@ -18,7 +19,6 @@ import {
 } from "@/lib/explore-catalog";
 import { fetchExploreCategoryPage, fetchExploreCategorySearch } from "@/lib/explore-client";
 import type { ExploreItem } from "@/lib/explore-service";
-import type { ExploreLeisureType } from "@/lib/explore-catalog";
 
 function GridCard({ type, item }: { type: ExploreLeisureType; item: ExploreItem }) {
   return (

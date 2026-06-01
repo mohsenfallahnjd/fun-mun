@@ -81,12 +81,19 @@
   }
 }
 
-body {
+html {
   background-color: var(--background);
   background-image:
     radial-gradient(ellipse 90% 60% at 50% -10%, var(--accent-soft), transparent 70%),
     linear-gradient(180deg, var(--background) 0%, var(--background-subtle) 100%);
   background-attachment: fixed;
+  min-height: 100dvh;
+}
+
+body {
+  background-color: transparent;
+  background-image: none;
+  min-height: 100dvh;
   color: var(--foreground);
   font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
 }

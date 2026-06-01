@@ -1,5 +1,4 @@
 import type { MetadataRoute } from "next";
-import { APP_ICON_ACCENT } from "@/lib/app-icon";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
@@ -9,7 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/",
     display: "standalone",
     background_color: "#f8fafc",
-    theme_color: APP_ICON_ACCENT,
+    theme_color: "#f8fafc",
     orientation: "portrait",
     icons: [
       {

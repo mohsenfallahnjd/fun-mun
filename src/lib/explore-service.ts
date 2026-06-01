@@ -1,5 +1,5 @@
-import { isNumericId, normalizeExploreId, parseItunesId, parseProviderId } from "./explore-id";
 import type { ExploreLeisureType } from "./explore-catalog";
+import { isNumericId, normalizeExploreId, parseItunesId, parseProviderId } from "./explore-id";
 import type { ContentRating } from "./rating";
 import { itunesRating, openLibraryRating, rawgRating, tmdbRating, tvmazeRating } from "./rating";
 import { searchGamesWikipedia } from "./search-games";

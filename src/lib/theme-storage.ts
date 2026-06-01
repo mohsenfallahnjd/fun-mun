@@ -46,6 +46,24 @@ export function applyThemeToDocument(themeId: ThemeId, isDark: boolean): void {
   }
   root.dataset.theme = themeId;
   root.style.colorScheme = isDark ? "dark" : "light";
+
+  const background = palette["--background"];
+  if (background) syncThemeColorMeta(background);
+}
+
+function syncThemeColorMeta(color: string): void {
+  const existing = document.querySelectorAll('meta[name="theme-color"]');
+  if (existing.length === 0) {
+    const meta = document.createElement("meta");
+    meta.name = "theme-color";
+    meta.content = color;
+    document.head.appendChild(meta);
+    return;
+  }
+
+  for (const node of existing) {
+    node.setAttribute("content", color);
+  }
 }
 
 export function prefersDarkMode(): boolean {

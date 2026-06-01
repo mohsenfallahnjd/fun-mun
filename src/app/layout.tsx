@@ -4,8 +4,10 @@ import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { SerwistProvider } from "@/components/SerwistProvider";
 import { SessionProvider } from "@/components/SessionProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { APP_ICON_ACCENT } from "@/lib/app-icon";
 import "./globals.css";
+
+const APP_BACKGROUND_LIGHT = "#f8fafc";
+const APP_BACKGROUND_DARK = "#09090b";
 
 const APP_NAME = "Fun Mun";
 const APP_TITLE = "Fun Mun — Leisure Time";
@@ -20,7 +22,7 @@ export const metadata: Metadata = {
   description: APP_DESCRIPTION,
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
     title: APP_NAME,
   },
   formatDetection: {
@@ -34,8 +36,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: APP_ICON_ACCENT },
-    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+    { media: "(prefers-color-scheme: light)", color: APP_BACKGROUND_LIGHT },
+    { media: "(prefers-color-scheme: dark)", color: APP_BACKGROUND_DARK },
   ],
   userScalable: false,
   viewportFit: "cover",
@@ -52,12 +54,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full antialiased">
-      <body className="min-h-full flex flex-col bg-background text-foreground">
+      <body className="flex min-h-dvh flex-col text-foreground">
         <SessionProvider>
           <ThemeProvider>
             <LeisureItemsProvider>
               <SerwistProvider swUrl="/serwist/sw.js">
-                <div className="flex min-h-full flex-1 flex-col pb-[calc(4.25rem+env(safe-area-inset-bottom))] sm:pb-0">
+                <div className="flex min-h-dvh flex-1 flex-col pt-[env(safe-area-inset-top)] pb-[calc(4.25rem+env(safe-area-inset-bottom))] sm:pb-0">
                   {children}
                 </div>
                 <MobileBottomNav />
