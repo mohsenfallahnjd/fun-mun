@@ -3,16 +3,16 @@
 import { useEffect, useState } from "react";
 import { ExploreSectionLink } from "@/components/ExploreCategoryPage";
 import { Image } from "@/components/Image";
+import { ItemBadges } from "@/components/ItemBadges";
 import { ItemTitle } from "@/components/ItemTitle";
 import { Plus } from "@/components/icons";
 import { Link } from "@/components/Link";
 import { RatingBadge } from "@/components/RatingBadge";
 import { AppHeader } from "@/components/SiteNav";
 import { TypeAvatar } from "@/components/TypeAvatar";
-import { TypeBadge } from "@/components/TypeBadge";
 import { useLeisureItems } from "@/hooks/useLeisureItems";
 import type { ExploreLeisureType } from "@/lib/explore-catalog";
-import { exploreItemPath } from "@/lib/explore-catalog";
+import { EXPLORE_CATEGORY_META, exploreItemPath } from "@/lib/explore-catalog";
 import { fetchExploreSections } from "@/lib/explore-client";
 import type { ExploreItem, ExploreSection } from "@/lib/explore-service";
 
@@ -52,7 +52,12 @@ function ExploreCard({
         )}
       </Link>
       <div className="flex flex-1 flex-col gap-2 p-3">
-        <TypeBadge type={type} />
+        <ItemBadges
+          type={type}
+          watchUrl={item.watchUrl}
+          rating={item.rating}
+          fallbackSource={EXPLORE_CATEGORY_META[type].source}
+        />
         <Link
           href={exploreItemPath(type, item.id)}
           className="line-clamp-2 text-sm font-semibold leading-snug text-foreground no-underline hover:text-accent"

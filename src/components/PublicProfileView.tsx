@@ -4,12 +4,12 @@ import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
 import { Image } from "@/components/Image";
+import { ItemBadges } from "@/components/ItemBadges";
 import { Loader2, Pencil, Share2, UserMinus, UserPlus } from "@/components/icons";
 import { Link } from "@/components/Link";
 import { ProfileRow } from "@/components/ProfileRow";
 import { AppHeader } from "@/components/SiteNav";
 import { TypeAvatar } from "@/components/TypeAvatar";
-import { TypeBadge } from "@/components/TypeBadge";
 import {
   fetchProfilePeople,
   fetchPublicProfile,
@@ -18,6 +18,7 @@ import {
 } from "@/lib/profile-client";
 import type { ProfileSummary } from "@/lib/profile-types";
 import { formatProgress } from "@/lib/progress";
+import type { ContentRating } from "@/lib/rating";
 import { shareUserProfile } from "@/lib/share-profile";
 import {
   type LeisureProgress,
@@ -45,8 +46,10 @@ interface PublicItem {
   title: string;
   subtitle?: string;
   imageUrl?: string;
+  watchUrl?: string;
   status: LeisureStatus;
   year?: number;
+  rating?: ContentRating;
   progress?: LeisureProgress;
 }
 
@@ -322,7 +325,11 @@ export function PublicProfileView() {
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <TypeBadge type={item.type} />
+                        <ItemBadges
+                          type={item.type}
+                          watchUrl={item.watchUrl}
+                          rating={item.rating}
+                        />
                         <p className="mt-1 truncate font-semibold text-foreground">{item.title}</p>
                         {item.subtitle && (
                           <p className="truncate text-sm text-muted">{item.subtitle}</p>

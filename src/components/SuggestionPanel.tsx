@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { Image } from "@/components/Image";
+import { ItemBadges } from "@/components/ItemBadges";
 import { ChevronDown, Play, Shuffle, Sparkles } from "@/components/icons";
 import { Link } from "@/components/Link";
 import { TypeAvatar } from "@/components/TypeAvatar";
-import { TypeBadge } from "@/components/TypeBadge";
 import { pickSuggestion } from "@/lib/suggestions";
 import type { LeisureItem, LeisureType } from "@/lib/types";
 
@@ -117,7 +117,11 @@ export function SuggestionPanel({ items, filterType, onStart }: SuggestionPanelP
           )}
 
           <div className="min-w-0 flex-1">
-            <TypeBadge type={suggestion.type} />
+            <ItemBadges
+              type={suggestion.type}
+              watchUrl={suggestion.watchUrl}
+              rating={suggestion.rating}
+            />
             <h3 className="mt-1 text-base font-semibold sm:mt-2 sm:text-lg">{suggestion.title}</h3>
             {suggestion.subtitle && (
               <p className="line-clamp-2 text-xs text-muted sm:text-sm">{suggestion.subtitle}</p>

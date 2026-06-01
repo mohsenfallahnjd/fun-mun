@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Image } from "@/components/Image";
+import { ItemBadges } from "@/components/ItemBadges";
 import { ItemTitle } from "@/components/ItemTitle";
 import { Loader2, Plus, Search, X } from "@/components/icons";
 import { LinkPreviewCard } from "@/components/LinkPreviewCard";
 import { RatingBadge } from "@/components/RatingBadge";
 import { StatusPicker } from "@/components/StatusPicker";
 import { TypeAvatar } from "@/components/TypeAvatar";
-import { TypeBadge, TypeIcon } from "@/components/TypeBadge";
+import { TypeIcon } from "@/components/TypeBadge";
 import type { LinkPreviewData } from "@/lib/link-preview";
 import { isValidHttpUrl } from "@/lib/link-preview";
 import { parseOptionalFloat, parseOptionalInt, progressFieldsForType } from "@/lib/progress";
@@ -419,7 +420,11 @@ export function ItemForm({ mode, initialItem, onSave, onClose }: ItemFormProps) 
                       )}
                     </div>
                     {result.rating && <RatingBadge rating={result.rating} variant="inline" />}
-                    {globalSearch && "type" in result && <TypeBadge type={result.type} />}
+                    <ItemBadges
+                      type={resultType(result)}
+                      watchUrl={result.sourceUrl}
+                      rating={result.rating}
+                    />
                   </button>
                 </li>
               ))}

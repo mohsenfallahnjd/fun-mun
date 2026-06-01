@@ -3,11 +3,13 @@
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Image } from "@/components/Image";
+import { ItemBadges } from "@/components/ItemBadges";
 import { ItemTitle } from "@/components/ItemTitle";
 import { ArrowLeft, ChevronRight, Loader2, Search, X } from "@/components/icons";
 import { Link } from "@/components/Link";
 import { RatingBadge } from "@/components/RatingBadge";
 import { AppHeader } from "@/components/SiteNav";
+import { SourceBadge } from "@/components/SourceBadge";
 import { TypeAvatar } from "@/components/TypeAvatar";
 import { TypeBadge } from "@/components/TypeBadge";
 import type { ExploreLeisureType } from "@/lib/explore-catalog";
@@ -50,6 +52,12 @@ function GridCard({ type, item }: { type: ExploreLeisureType; item: ExploreItem 
         )}
       </div>
       <div className="flex flex-1 flex-col gap-1.5 p-3">
+        <ItemBadges
+          type={type}
+          watchUrl={item.watchUrl}
+          rating={item.rating}
+          fallbackSource={EXPLORE_CATEGORY_META[type].source}
+        />
         <ItemTitle
           title={item.title}
           originalTitle={item.originalTitle}
@@ -203,8 +211,9 @@ export function ExploreCategoryPage() {
         </Link>
         <div className="mt-4 flex items-start justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <TypeBadge type={type} />
+              <SourceBadge source={meta.source} />
               <h1 className="text-3xl font-bold tracking-tight">{meta.title}</h1>
             </div>
             <p className="mt-1 text-muted">{meta.description}</p>

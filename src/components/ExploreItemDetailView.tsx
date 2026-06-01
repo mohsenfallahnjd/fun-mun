@@ -3,13 +3,13 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Image } from "@/components/Image";
+import { ItemBadges } from "@/components/ItemBadges";
 import { ItemTitle } from "@/components/ItemTitle";
 import { ArrowLeft, ExternalLink, Loader2, Plus } from "@/components/icons";
 import { Link } from "@/components/Link";
 import { RatingBadge } from "@/components/RatingBadge";
 import { AppHeader } from "@/components/SiteNav";
 import { TypeAvatar } from "@/components/TypeAvatar";
-import { TypeBadge } from "@/components/TypeBadge";
 import { useLeisureItems } from "@/hooks/useLeisureItems";
 import {
   EXPLORE_CATEGORY_META,
@@ -18,7 +18,7 @@ import {
 } from "@/lib/explore-catalog";
 import { fetchExploreItemDetail } from "@/lib/explore-client";
 import type { ExploreItemDetail } from "@/lib/explore-service";
-import { getTypeLabel } from "@/lib/types";
+import { resolveItemSource } from "@/lib/source";
 
 export function ExploreItemDetailView() {
   const params = useParams();
@@ -112,7 +112,12 @@ export function ExploreItemDetailView() {
     );
   }
 
-  const sourceLabel = item.sourceName ?? meta.source;
+  const sourceLabel = resolveItemSource({
+    sourceName: item.sourceName,
+    watchUrl: item.watchUrl,
+    rating: item.rating,
+    fallbackSource: meta.source,
+  });
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-8 sm:px-6">
@@ -146,7 +151,13 @@ export function ExploreItemDetailView() {
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-            <TypeBadge type={type} />
+            <ItemBadges
+              type={type}
+              sourceName={item.sourceName}
+              watchUrl={item.watchUrl}
+              rating={item.rating}
+              fallbackSource={meta.source}
+            />
             <h1 className="mt-2 text-2xl font-bold sm:text-3xl">
               <ItemTitle
                 title={item.title}
@@ -165,10 +176,8 @@ export function ExploreItemDetailView() {
 
         <div className="space-y-6 p-6">
           <div className="flex flex-wrap items-center gap-3 text-sm text-muted">
-            <span>{getTypeLabel(type)}</span>
             {item.year && <span>{item.year}</span>}
             {item.rating && <RatingBadge rating={item.rating} variant="detail" />}
-            <span>via {sourceLabel}</span>
           </div>
 
           {item.description && (

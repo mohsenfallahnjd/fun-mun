@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { Image } from "@/components/Image";
+import { ItemBadges } from "@/components/ItemBadges";
 import { ItemTitle } from "@/components/ItemTitle";
 import {
   ChevronRight,
@@ -15,7 +16,6 @@ import { Link } from "@/components/Link";
 import { RatingBadge } from "@/components/RatingBadge";
 import { StatusPicker } from "@/components/StatusPicker";
 import { TypeAvatar } from "@/components/TypeAvatar";
-import { TypeBadge } from "@/components/TypeBadge";
 import { useProfileUsername } from "@/hooks/useProfileUsername";
 import {
   advanceProgress,
@@ -25,6 +25,7 @@ import {
 } from "@/lib/progress";
 import { readPageHref } from "@/lib/public-item-types";
 import { shareLeisureItem } from "@/lib/share-item";
+import { resolveItemSource } from "@/lib/source";
 import { type LeisureItem, type LeisureStatus, STATUS_CARD_CLASS } from "@/lib/types";
 
 interface LeisureCardProps {
@@ -62,6 +63,7 @@ export function LeisureCard({
   const statusStyle = STATUS_CARD_CLASS[item.status];
   const showNext = canAdvanceProgress(item);
   const canRead = item.type === "article" && Boolean(item.watchUrl);
+  const sourceLabel = resolveItemSource({ watchUrl: item.watchUrl, rating: item.rating });
 
   const handleShare = () => {
     void shareLeisureItem(item, username ? { username } : undefined);
@@ -177,7 +179,7 @@ export function LeisureCard({
             </h3>
             {item.subtitle && <p className="truncate text-sm text-muted">{item.subtitle}</p>}
           </div>
-          <TypeBadge type={item.type} />
+          <ItemBadges type={item.type} watchUrl={item.watchUrl} rating={item.rating} />
         </div>
 
         {progressLabel && (
@@ -224,7 +226,7 @@ export function LeisureCard({
               className="inline-flex items-center gap-1 rounded-lg bg-muted/60 px-2.5 py-1 text-xs font-medium no-underline hover:bg-muted"
             >
               <ExternalLink className="h-3.5 w-3.5" />
-              Open link
+              {sourceLabel ?? "Open link"}
             </Link>
           )}
 

@@ -4,6 +4,7 @@ import { useParams, usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Image } from "@/components/Image";
+import { ItemBadges } from "@/components/ItemBadges";
 import { type ItemDraft, ItemForm } from "@/components/ItemForm";
 import { ItemTitle } from "@/components/ItemTitle";
 import {
@@ -18,15 +19,16 @@ import {
 } from "@/components/icons";
 import { Link } from "@/components/Link";
 import { RatingBadge } from "@/components/RatingBadge";
+import { SourceBadge } from "@/components/SourceBadge";
 import { StatusPicker } from "@/components/StatusPicker";
 import { TypeAvatar } from "@/components/TypeAvatar";
-import { TypeBadge } from "@/components/TypeBadge";
 import { useAppRouter } from "@/hooks/useAppRouter";
 import { useLeisureItems } from "@/hooks/useLeisureItems";
 import { fetchPublicItem } from "@/lib/profile-client";
 import { formatProgress } from "@/lib/progress";
 import { readPageHref } from "@/lib/public-item-types";
 import { shareLeisureItem } from "@/lib/share-item";
+import { resolveItemSource } from "@/lib/source";
 import { getTypeLabel, type LeisureItem, STATUS_CARD_CLASS } from "@/lib/types";
 
 export function PublicItemDetailView() {
@@ -103,6 +105,7 @@ export function PublicItemDetailView() {
   const profileHref = `/u/${profile.username}`;
   const canReadInApp = item.type === "article" && Boolean(item.watchUrl);
   const readHref = item.watchUrl ? readPageHref(item.watchUrl, pathname) : null;
+  const sourceLabel = resolveItemSource({ watchUrl: item.watchUrl, rating: item.rating });
 
   const handleShare = async () => {
     const result = await shareLeisureItem(displayItem, { username: profile.username ?? undefined });
@@ -176,7 +179,7 @@ export function PublicItemDetailView() {
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-              <TypeBadge type={item.type} />
+              <ItemBadges type={item.type} watchUrl={item.watchUrl} rating={item.rating} />
               <h1 className="mt-2 text-2xl font-bold sm:text-3xl">
                 <ItemTitle
                   title={item.title}
@@ -201,6 +204,7 @@ export function PublicItemDetailView() {
               {item.year && (
                 <span className="rounded-lg bg-muted/40 px-2.5 py-1 text-muted">{item.year}</span>
               )}
+              {sourceLabel && <SourceBadge source={sourceLabel} />}
               {progressLabel && (
                 <span className="rounded-lg bg-accent/10 px-2.5 py-1 font-medium text-accent">
                   {progressLabel}
@@ -250,7 +254,7 @@ export function PublicItemDetailView() {
                     className="flex w-full items-center justify-center gap-2 border-b border-border bg-accent px-4 py-3.5 text-sm font-semibold text-accent-foreground no-underline transition hover:brightness-110"
                   >
                     <ExternalLink className="h-4 w-4" />
-                    Open link
+                    {sourceLabel ? `View on ${sourceLabel}` : "Open link"}
                   </Link>
                 )}
                 <div

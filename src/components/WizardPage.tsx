@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { Image } from "@/components/Image";
+import { ItemBadges } from "@/components/ItemBadges";
 import { ChevronRight, Play, Sparkles } from "@/components/icons";
 import { AppHeader } from "@/components/SiteNav";
 import { TypeAvatar } from "@/components/TypeAvatar";
-import { TypeBadge, TypeIcon } from "@/components/TypeBadge";
+import { TypeIcon } from "@/components/TypeBadge";
 import { useLeisureItems } from "@/hooks/useLeisureItems";
 import {
   pickWizardSuggestion,
@@ -58,7 +59,7 @@ function SuggestionCard({ item, onStart }: { item: LeisureItem; onStart: () => v
         <TypeAvatar type={item.type} className="h-28 w-20 shrink-0" iconClassName="h-9 w-9" />
       )}
       <div className="min-w-0 flex-1">
-        <TypeBadge type={item.type} />
+        <ItemBadges type={item.type} watchUrl={item.watchUrl} rating={item.rating} />
         <h3 className="mt-2 text-lg font-semibold">{item.title}</h3>
         {item.subtitle && <p className="text-sm text-muted">{item.subtitle}</p>}
       </div>
