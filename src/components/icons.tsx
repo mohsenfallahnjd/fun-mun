@@ -1,8 +1,12 @@
 export {
   ArrowLeft,
   ArrowUpDown,
+  Bell,
+  BellOff,
+  BellRing,
   Bookmark,
   BookOpen,
+  Calendar,
   Check,
   ChevronDown,
   ChevronRight,

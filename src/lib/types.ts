@@ -37,6 +37,8 @@ export interface LeisureItem {
   progress?: LeisureProgress;
   order?: number;
   createdAt: string;
+  releaseDate?: string;
+  releaseReminderEnabled?: boolean;
 }
 
 export interface SearchResult {

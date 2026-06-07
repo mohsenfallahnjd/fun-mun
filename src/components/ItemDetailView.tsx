@@ -9,6 +9,7 @@ import { ItemTitle } from "@/components/ItemTitle";
 import { ArrowLeft, BookOpen, ExternalLink, Pencil, Share2, Trash2 } from "@/components/icons";
 import { Link } from "@/components/Link";
 import { RatingBadge } from "@/components/RatingBadge";
+import { ReleaseReminderButton } from "@/components/ReleaseReminderButton";
 import { SourceBadge } from "@/components/SourceBadge";
 import { StatusPicker } from "@/components/StatusPicker";
 import { TypeAvatar } from "@/components/TypeAvatar";
@@ -216,6 +217,9 @@ export function ItemDetailView() {
                     Remove
                   </button>
                 </div>
+                {(item.type === "movie" || item.type === "series") && (
+                  <ReleaseReminderButton item={item} />
+                )}
               </div>
             </section>
           </div>
