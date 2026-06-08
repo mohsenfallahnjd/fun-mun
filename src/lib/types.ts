@@ -38,6 +38,7 @@ export interface LeisureItem {
   order?: number;
   createdAt: string;
   releaseDate?: string;
+  releaseDay?: number;
   releaseReminderEnabled?: boolean;
 }
 

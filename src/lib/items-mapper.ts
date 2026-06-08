@@ -43,6 +43,10 @@ export function normalizeItemsForSave(items: LeisureItem[]): LeisureItem[] {
       year: typeof raw.year === "number" && Number.isFinite(raw.year) ? raw.year : undefined,
       order: typeof raw.order === "number" && Number.isFinite(raw.order) ? raw.order : undefined,
       releaseDate: typeof raw.releaseDate === "string" ? raw.releaseDate : undefined,
+      releaseDay:
+        typeof raw.releaseDay === "number" && raw.releaseDay >= 0 && raw.releaseDay <= 6
+          ? raw.releaseDay
+          : undefined,
       releaseReminderEnabled: Boolean(raw.releaseReminderEnabled),
     });
   }
@@ -77,6 +81,7 @@ export function itemToInsertRow(item: LeisureItem, userId: string) {
     progress: item.progress ?? null,
     order: item.order ?? null,
     releaseDate: item.releaseDate ?? null,
+    releaseDay: item.releaseDay ?? null,
     releaseReminderEnabled: item.releaseReminderEnabled ?? false,
     createdAt: parseCreatedAt(item.createdAt),
   };
@@ -99,6 +104,7 @@ export function rowToItem(row: DbLeisureItem): LeisureItem {
     order: row.order ?? undefined,
     createdAt: row.createdAt.toISOString(),
     releaseDate: row.releaseDate ?? undefined,
+    releaseDay: row.releaseDay ?? undefined,
     releaseReminderEnabled: row.releaseReminderEnabled ?? undefined,
   };
 }

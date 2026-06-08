@@ -5,6 +5,7 @@ import { Image } from "@/components/Image";
 import { ItemBadges } from "@/components/ItemBadges";
 import { ItemTitle } from "@/components/ItemTitle";
 import {
+  BellRing,
   ChevronRight,
   ExternalLink,
   GripVertical,
@@ -14,6 +15,7 @@ import {
 } from "@/components/icons";
 import { Link } from "@/components/Link";
 import { RatingBadge } from "@/components/RatingBadge";
+import { RELEASE_DAY_NAMES } from "@/components/ReleaseReminderButton";
 import { StatusPicker } from "@/components/StatusPicker";
 import { TypeAvatar } from "@/components/TypeAvatar";
 import { useProfileUsername } from "@/hooks/useProfileUsername";
@@ -188,7 +190,23 @@ export function LeisureCard({
           </p>
         )}
 
-        {item.notes && <p className="line-clamp-2 text-sm text-muted">{item.notes}</p>}
+        {item.releaseReminderEnabled && (item.releaseDate || item.releaseDay !== undefined) && (
+          <p className="inline-flex w-fit items-center gap-1 rounded-lg bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">
+            <BellRing className="h-3 w-3" />
+            {item.releaseDay !== undefined
+              ? `Every ${RELEASE_DAY_NAMES[item.releaseDay]}`
+              : item.releaseDate
+                ? new Date(`${item.releaseDate}T00:00:00`).toLocaleDateString(undefined, {
+                    month: "short",
+                    day: "numeric",
+                  })
+                : null}
+          </p>
+        )}
+
+        {item.notes && (
+          <p className="hidden line-clamp-2 text-sm text-muted sm:block">{item.notes}</p>
+        )}
 
         <StatusPicker
           value={item.status}
@@ -197,7 +215,7 @@ export function LeisureCard({
           fullWidth
         />
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-2">
           {showNext && (
             <button
               type="button"
@@ -226,18 +244,18 @@ export function LeisureCard({
               className="inline-flex items-center gap-1 rounded-lg bg-muted/60 px-2.5 py-1 text-xs font-medium no-underline hover:bg-muted"
             >
               <ExternalLink className="h-3.5 w-3.5" />
-              {sourceLabel ?? "Open link"}
+              <span className="hidden sm:inline">{sourceLabel ?? "Open"}</span>
+              <span className="sm:hidden">Open</span>
             </Link>
           )}
 
-          {item.year && <span className="text-xs text-muted">{item.year}</span>}
-          {item.rating && <RatingBadge rating={item.rating} variant="inline" />}
+          {item.year && <span className="hidden text-xs text-muted sm:inline">{item.year}</span>}
 
           <div className="ml-auto flex gap-1">
             <button
               type="button"
               onClick={handleShare}
-              className="rounded-lg p-1.5 text-muted transition-all hover:bg-muted/60 hover:text-foreground"
+              className="hidden rounded-lg p-1.5 text-muted transition-all hover:bg-muted/60 hover:text-foreground sm:block"
               aria-label="Share"
             >
               <Share2 className="h-3.5 w-3.5" />
