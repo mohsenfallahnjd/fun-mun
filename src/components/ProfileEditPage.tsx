@@ -6,6 +6,7 @@ import { Image } from "@/components/Image";
 import { Loader2, LogOut, Pencil, Share2 } from "@/components/icons";
 import { Link } from "@/components/Link";
 import { ListBackupSection } from "@/components/ListBackupSection";
+import { PushNotificationsSetup } from "@/components/PushNotificationsSetup";
 import { AppHeader } from "@/components/SiteNav";
 import { ThemePicker } from "@/components/ThemePicker";
 import { useTheme } from "@/components/ThemeProvider";
@@ -339,6 +340,15 @@ export function ProfileEditPage() {
       </form>
 
       <ListBackupSection />
+
+      {isSignedIn && (
+        <section className="rounded-3xl border border-border bg-surface p-6">
+          <h2 className="mb-1 text-sm font-semibold uppercase tracking-wider text-muted">
+            Release notifications
+          </h2>
+          <PushNotificationsSetup />
+        </section>
+      )}
 
       {isSignedIn && (
         <button

@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { HeaderProfile } from "@/components/HeaderProfile";
 import { Bookmark, Compass, Sparkles, Users } from "@/components/icons";
 import { Link } from "@/components/Link";
+import { NotificationsBell } from "@/components/NotificationsBell";
 
 const NAV = [
   { href: "/", label: "My list", icon: Bookmark },
@@ -42,7 +43,8 @@ export function AppHeader() {
   return (
     <div className="hidden items-center gap-2 sm:flex sm:gap-3">
       <SiteNav />
-      <div className="ml-auto flex shrink-0 items-center sm:ml-0">
+      <div className="ml-auto flex shrink-0 items-center gap-2 sm:ml-0">
+        <NotificationsBell />
         <HeaderProfile />
       </div>
     </div>
