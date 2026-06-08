@@ -108,6 +108,16 @@ const MIGRATIONS: Array<{ id: string; label: string; sql: string }> = [
     label: "Original titles",
     sql: 'ALTER TABLE "leisure_items" ADD COLUMN IF NOT EXISTS "original_title" text;',
   },
+  {
+    id: "0006_release_reminders",
+    label: "Release reminder tables",
+    sql: readSql("drizzle/0004_release_reminders.sql"),
+  },
+  {
+    id: "0007_release_day",
+    label: "Weekly release day column",
+    sql: readSql("drizzle/0005_release_day.sql"),
+  },
 ];
 
 await sql`

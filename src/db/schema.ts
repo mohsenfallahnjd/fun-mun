@@ -56,6 +56,7 @@ export const leisureItems = pgTable("leisure_items", {
   progress: jsonb("progress"),
   order: integer("order"),
   releaseDate: text("release_date"),
+  releaseDay: integer("release_day"),
   releaseReminderEnabled: boolean("release_reminder_enabled").default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
