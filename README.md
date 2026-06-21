@@ -1,78 +1,100 @@
 # Fun Mun — Leisure Time
 
-A simple, modern bookmarker for your free time: books, audiobooks, podcasts, movies, series, and places to visit.
+A modern, open-source bookmarker for your free time. Track books, movies, series, podcasts, games, hobbies, and more — across devices, with or without an account.
 
 ## Features
 
-- **6 types**: Book, Audiobook, Podcast, Movie, Series, Place
-- **Auto-fill** when adding items (Open Library, TVMaze, Wikipedia)
-- **Optional links** with preview and auto-fill
-- **User profiles** — sign in and save your list to the cloud
+- **8 types** — Book, Audiobook, Podcast, Movie, Series, Game, Hobby, Article
+- **Auto-fill** when adding items (Open Library, TMDB, TVMaze, RAWG, iTunes, Wikipedia)
+- **Status tracking** — Queue / In Progress / Done
+- **Progress tracking** — pages, episodes, hours played
+- **Release reminders** — get notified the day before and on release day (or weekly for recurring series)
+- **Push notifications** — web push via service worker
+- **Social profiles** — public profiles, follow people, discover lists
+- **Explore** — browse trending items by category
+- **Random suggestion** — "What should I do tonight?" wizard
 - **Filter, sort, drag to reorder**
-- **Random suggestion** — “What should I do tonight?”
-- **PWA** — install on phone/desktop
+- **PWA** — installable on phone and desktop
+- **Guest mode** — works without sign-in (localStorage), sync to cloud after sign-up
 
-## Run locally
+## Quick start
 
 ```bash
 bun install
 cp .env.example .env.local
-# Fill in AUTH_SECRET + DATABASE_URL (see below)
+# fill in AUTH_SECRET + DATABASE_URL (see below)
 bun run db:migrate
 bun run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-### Auth (Auth.js)
+## Environment variables
 
-1. Generate a secret: `openssl rand -base64 32`
-2. Add to `.env.local`:
-   - `AUTH_SECRET` — random string from step 1
-   - `AUTH_URL` — `http://localhost:3000` (use your production URL on Vercel)
-
-Sign up with email and password at `/sign-up`. No third-party auth provider required.
+| Variable | Required | Description |
+| --- | --- | --- |
+| `AUTH_SECRET` | ✅ | Random string — `openssl rand -base64 32` |
+| `DATABASE_URL` | ✅ | Neon Postgres connection string |
+| `AUTH_URL` | ✅ | Your app URL (`http://localhost:3000` locally) |
+| `TMDB_API_KEY` | optional | Movie & series auto-fill (v3 key or v4 JWT) |
+| `RAWG_API_KEY` | optional | Game auto-fill (Wikipedia fallback works without it) |
+| `VAPID_PUBLIC_KEY` | optional | Web push notifications |
+| `VAPID_PRIVATE_KEY` | optional | Web push notifications |
+| `CRON_SECRET` | optional | Secures the `/api/cron/releases` endpoint |
 
 ### Database (Neon Postgres)
 
-1. Create a database at [neon.tech](https://neon.tech) or add **Neon** from Vercel Storage
+1. Create a database at [neon.tech](https://neon.tech) (free tier works)
 2. Set `DATABASE_URL` in `.env.local`
-3. Apply migrations (additive — keeps existing data):
+3. Run migrations:
 
 ```bash
 bun run db:migrate
 ```
 
-Avoid `db:push` on a database that already has data — Drizzle may propose destructive changes. Use `db:migrate` for schema updates instead.
+Use `db:migrate` — not `db:push` — on any database that already has data.
 
-Or run the SQL in `drizzle/0000_init.sql` manually on a fresh database only.
+### Auth
 
-### Optional: TMDB
+Sign up with email + password at `/sign-up`. No third-party OAuth required.
 
-Set `TMDB_API_KEY` for richer movie and series results. TMDB accepts either a **v3 API key** or a **v4 read access token** (JWT).
+### Push notifications (optional)
+
+Generate VAPID keys:
+
+```bash
+npx web-push generate-vapid-keys
+```
+
+Set `VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY` in your environment.
 
 ## Deploy on Vercel
 
-1. Push to GitHub and import in [Vercel](https://vercel.com/new)
-2. Add **Neon** integration (or set `DATABASE_URL` manually)
-3. Set `AUTH_SECRET` and `AUTH_URL` (your production domain)
-4. Run `bun run db:migrate` against production `DATABASE_URL` once
+1. Push to GitHub and import at [vercel.com/new](https://vercel.com/new)
+2. Add **Neon** from the Vercel Marketplace (or set `DATABASE_URL` manually)
+3. Set `AUTH_SECRET`, `AUTH_URL` (your production domain), and optional API keys
+4. Run `bun run db:migrate` with the production `DATABASE_URL` once
 5. Deploy
 
-**Guest mode:** Without signing in, data stays in browser localStorage. After sign-in, use **Import local items** to move it to your profile.
+The cron job (`vercel.json`) runs daily at 08:00 UTC to send release reminders.
 
 ## Stack
 
-- Next.js 16 · Tailwind CSS 4 · Bun · Biome
-- Auth.js (NextAuth) · Neon Postgres · Drizzle ORM
+- **Next.js 16** · **Tailwind CSS 4** · **Bun** · **Biome**
+- **Auth.js** (email/password) · **Neon Postgres** · **Drizzle ORM**
+- **Serwist** (PWA/service worker) · **Web Push API**
 
 ## Scripts
 
 ```bash
-bun run dev        # start dev server
-bun run build      # production build
-bun run db:migrate # apply schema migrations (safe, keeps data)
-bun run db:push    # dev-only schema sync (can drop data — prefer db:migrate)
-bun run db:studio  # Drizzle Studio
-bun run lint       # Biome check
+bun run dev          # start dev server
+bun run build        # production build
+bun run lint         # Biome check
+bun run lint:fix     # Biome auto-fix
+bun run db:migrate   # apply schema migrations (safe, keeps data)
+bun run db:studio    # Drizzle Studio
 ```
+
+## License
+
+MIT — see [LICENSE](LICENSE).
