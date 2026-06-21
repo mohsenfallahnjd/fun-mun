@@ -217,7 +217,12 @@ export function LeisureItemsProvider({ children }: { children: React.ReactNode }
 
   const setStatus = useCallback(
     (id: string, nextStatus: LeisureStatus) => {
-      updateItem(id, { status: nextStatus });
+      if (nextStatus === "done") {
+        const maxOrder = itemsRef.current.reduce((m, i) => Math.max(m, i.order ?? 0), 0);
+        updateItem(id, { status: nextStatus, order: maxOrder + 1 });
+      } else {
+        updateItem(id, { status: nextStatus });
+      }
     },
     [updateItem],
   );
