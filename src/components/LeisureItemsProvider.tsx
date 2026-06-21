@@ -3,6 +3,7 @@
 import { nanoid } from "nanoid";
 import { useSession } from "next-auth/react";
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { mergeItemLists } from "@/lib/items-mapper";
 import { reorderItems as applyReorder } from "@/lib/sort";
 import { loadItems, saveItems } from "@/lib/storage";
 import type { LeisureItem, LeisureStatus } from "@/lib/types";
@@ -56,17 +57,10 @@ function loadItemsForAuth(isSignedIn: boolean): Promise<{ items: LeisureItem[]; 
     if (isSignedIn) {
       const cloud = await fetchCloudItems();
       if (cloud !== null) {
-        if (cloud.length > 0) {
-          saveItems(cloud);
-          return { items: cloud, cloud: true };
-        }
-
-        if (local.length > 0) {
-          await saveCloudItems(local);
-          return { items: local, cloud: true };
-        }
-
-        return { items: [], cloud: true };
+        const merged = mergeItemLists(local, cloud);
+        if (merged.length !== cloud.length) await saveCloudItems(merged);
+        saveItems(merged);
+        return { items: merged, cloud: true };
       }
     }
 
