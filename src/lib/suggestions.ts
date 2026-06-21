@@ -19,17 +19,17 @@ const TIME_TYPE_BOOST: Record<WizardTime, Partial<Record<LeisureType, number>>> 
 };
 
 const MOOD_TYPE_BOOST: Record<WizardMood, Partial<Record<LeisureType, number>>> = {
-  relax: { movie: 3, audiobook: 2, place: 2, book: 1 },
+  relax: { movie: 3, audiobook: 2, hobby: 2, book: 1 },
   excited: { game: 3, movie: 2, series: 2 },
   learn: { book: 3, podcast: 3, audiobook: 2 },
-  social: { place: 3, game: 2, movie: 2, series: 2 },
+  social: { hobby: 3, game: 2, movie: 2, series: 2 },
   any: {},
 };
 
 const ENERGY_TYPE_BOOST: Record<WizardEnergy, Partial<Record<LeisureType, number>>> = {
   low: { book: 2, audiobook: 2, movie: 2, podcast: 2 },
   medium: { series: 2, game: 2, movie: 2 },
-  high: { game: 3, place: 2, series: 2 },
+  high: { game: 3, hobby: 2, series: 2 },
   any: {},
 };
 

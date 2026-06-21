@@ -13,6 +13,7 @@ export {
   Cloud,
   Compass,
   Download,
+  Dumbbell,
   ExternalLink,
   FileText,
   Film,

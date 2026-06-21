@@ -22,7 +22,7 @@ export function profileShareText(
 
   if (count > 0) {
     const picks = count === 1 ? "1 leisure pick" : `${count} leisure picks`;
-    return `${who} shared ${picks} on Fun Mun — books, movies, series, games & places for your next day off. Worth a peek!`;
+    return `${who} shared ${picks} on Fun Mun — books, movies, series, games & hobbies for your next day off. Worth a peek!`;
   }
 
   return `See what ${who} saves for downtime on Fun Mun — reads, watches, listens & spots for better leisure time.`;

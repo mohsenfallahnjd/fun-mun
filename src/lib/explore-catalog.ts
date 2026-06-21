@@ -37,9 +37,9 @@ export const EXPLORE_CATEGORY_META: Record<
     description: "Top-rated video games.",
     source: "RAWG",
   },
-  place: {
-    title: "Places",
-    description: "Destinations and landmarks to explore.",
+  hobby: {
+    title: "Hobbies",
+    description: "Activities and hobbies to try.",
     source: "Wikipedia",
   },
 };

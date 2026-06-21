@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Fun Mun — Leisure Time",
     short_name: "Fun Mun",
-    description: "Bookmark books, movies, series, podcasts and places for your free time.",
+    description: "Bookmark books, movies, series, podcasts and hobbies for your free time.",
     start_url: "/",
     display: "standalone",
     background_color: "#f8fafc",

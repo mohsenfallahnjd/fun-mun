@@ -376,8 +376,8 @@ async function fetchWikipediaSearch(query: string, limit = 10): Promise<ExploreI
   });
 }
 
-async function fetchWikipediaPlaces(limit = 10): Promise<ExploreItem[]> {
-  return fetchWikipediaSearch("famous tourist destination city", limit);
+async function fetchWikipediaHobbies(limit = 10): Promise<ExploreItem[]> {
+  return fetchWikipediaSearch("popular hobby activity leisure", limit);
 }
 
 import {
@@ -523,7 +523,7 @@ export async function fetchExploreSections(): Promise<ExploreSection[]> {
     gamesRawg,
     gamesWiki,
     podcasts,
-    places,
+    hobbies,
   ] = await Promise.all([
     safe(() => fetchOpenLibraryTrending(10), []),
     safe(() => fetchOpenLibrarySubject("audiobooks", 10), []),
@@ -535,7 +535,7 @@ export async function fetchExploreSections(): Promise<ExploreSection[]> {
     safe(() => fetchRawgPopular(10), []),
     safe(() => fetchWikipediaGames(10), []),
     safe(() => fetchItunesRss("toppodcasts", 10), []),
-    safe(() => fetchWikipediaPlaces(10), []),
+    safe(() => fetchWikipediaHobbies(10), []),
   ]);
 
   const movies = moviesTmdb.length > 0 ? moviesTmdb : moviesItunes;
@@ -554,7 +554,7 @@ export async function fetchExploreSections(): Promise<ExploreSection[]> {
     { type: "series", title: "Popular series", items: series },
     { type: "podcast", title: "Top podcasts", items: podcasts },
     { type: "audiobook", title: "Popular audiobooks", items: audiobooks },
-    { type: "place", title: "Places to visit", items: places },
+    { type: "hobby", title: "Hobbies to try", items: hobbies },
   ];
 
   return sections.filter((s) => s.items.length > 0);
@@ -563,11 +563,11 @@ export async function fetchExploreSections(): Promise<ExploreSection[]> {
 const PAGE_SIZE = 20;
 
 const BOOK_SUBJECTS = ["fiction", "science_fiction", "fantasy", "mystery", "romance", "history"];
-const PLACE_QUERIES = [
-  "famous tourist destination city",
-  "world heritage site",
-  "national park landmark",
-  "historic city travel",
+const HOBBY_QUERIES = [
+  "popular hobby activity",
+  "outdoor sport recreation",
+  "board game tabletop hobby",
+  "creative hobby craft",
 ];
 
 async function fetchOpenLibrarySubjectPage(
@@ -860,9 +860,9 @@ export async function fetchExplorePage(type: LeisureType, page = 1): Promise<Exp
     }
     case "podcast":
       return fetchItunesSearchPage("podcast", "podcast", safePage);
-    case "place": {
-      const query = PLACE_QUERIES[(safePage - 1) % PLACE_QUERIES.length];
-      const queryPage = Math.floor((safePage - 1) / PLACE_QUERIES.length) + 1;
+    case "hobby": {
+      const query = HOBBY_QUERIES[(safePage - 1) % HOBBY_QUERIES.length];
+      const queryPage = Math.floor((safePage - 1) / HOBBY_QUERIES.length) + 1;
       return fetchWikipediaPage(query, queryPage);
     }
     default:
@@ -1045,7 +1045,7 @@ export async function searchExploreCategory(
       return fetchRawgSearchPage(q, safePage);
     case "podcast":
       return fetchItunesSearchPage(q, "podcast", safePage);
-    case "place":
+    case "hobby":
       return fetchWikipediaPage(q, safePage);
     default:
       return { items: [], page: safePage, hasMore: false };
@@ -1421,7 +1421,7 @@ export async function fetchExploreItem(
       );
     case "podcast":
       return safe(() => fetchItunesLookup(decodedId, "podcast"), null);
-    case "place":
+    case "hobby":
       return safe(() => fetchWikipediaDetail(decodedId), null);
     default:
       return null;

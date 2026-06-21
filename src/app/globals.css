@@ -25,8 +25,8 @@
   --tag-series-bg: rgb(47 107 98 / 0.14);
   --tag-game: #4a5c8c;
   --tag-game-bg: rgb(74 92 140 / 0.14);
-  --tag-place: #3d6b45;
-  --tag-place-bg: rgb(61 107 69 / 0.14);
+  --tag-hobby: #3d6b45;
+  --tag-hobby-bg: rgb(61 107 69 / 0.14);
   --tag-article: #475569;
   --tag-article-bg: rgb(71 85 105 / 0.14);
 
@@ -71,8 +71,8 @@
     --tag-series-bg: rgb(109 181 168 / 0.16);
     --tag-game: #8fa4d4;
     --tag-game-bg: rgb(143 164 212 / 0.16);
-    --tag-place: #7cb883;
-    --tag-place-bg: rgb(124 184 131 / 0.16);
+    --tag-hobby: #7cb883;
+    --tag-hobby-bg: rgb(124 184 131 / 0.16);
     --tag-article: #94a3b8;
     --tag-article-bg: rgb(148 163 184 / 0.16);
 

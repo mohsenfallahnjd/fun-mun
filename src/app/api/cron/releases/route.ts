@@ -19,6 +19,10 @@ function todayWeekday(): number {
   return new Date().getUTCDay();
 }
 
+export async function GET(request: NextRequest) {
+  return POST(request);
+}
+
 export async function POST(request: NextRequest) {
   const secret = process.env.CRON_SECRET;
   const auth = request.headers.get("authorization");

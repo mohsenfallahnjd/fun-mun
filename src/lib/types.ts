@@ -4,7 +4,7 @@ export type LeisureType =
   | "podcast"
   | "movie"
   | "series"
-  | "place"
+  | "hobby"
   | "game"
   | "article";
 
@@ -95,7 +95,7 @@ export const LEISURE_TYPES: {
   { value: "movie", label: "Movie", labelFa: "فیلم" },
   { value: "series", label: "Series", labelFa: "سریال" },
   { value: "game", label: "Game", labelFa: "بازی" },
-  { value: "place", label: "Place", labelFa: "مکان" },
+  { value: "hobby", label: "Hobby", labelFa: "سرگرمی" },
   { value: "article", label: "Article", labelFa: "مقاله" },
 ];
 
@@ -106,7 +106,7 @@ export const TYPE_COLORS: Record<LeisureType, string> = {
   movie: "bg-[var(--tag-movie-bg)] text-[var(--tag-movie)]",
   series: "bg-[var(--tag-series-bg)] text-[var(--tag-series)]",
   game: "bg-[var(--tag-game-bg)] text-[var(--tag-game)]",
-  place: "bg-[var(--tag-place-bg)] text-[var(--tag-place)]",
+  hobby: "bg-[var(--tag-hobby-bg)] text-[var(--tag-hobby)]",
   article: "bg-[var(--tag-article-bg)] text-[var(--tag-article)]",
 };
 

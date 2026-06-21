@@ -101,7 +101,7 @@ export function LeisureApp() {
               </div>
               <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Leisure time</h1>
               <p className="mt-1 hidden text-sm text-muted sm:block">
-                Books, shows, games, podcasts & places — bookmarked for when you need a break.
+                Books, shows, games, podcasts & hobbies — bookmarked for when you need a break.
               </p>
             </div>
 

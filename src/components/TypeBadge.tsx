@@ -1,10 +1,10 @@
 import {
   BookOpen,
+  Dumbbell,
   FileText,
   Film,
   Gamepad2,
   Headphones,
-  MapPin,
   Mic,
   Tv,
 } from "@/components/icons";
@@ -35,8 +35,8 @@ export function TypeIcon({
       return <Tv {...props} />;
     case "game":
       return <Gamepad2 {...props} />;
-    case "place":
-      return <MapPin {...props} />;
+    case "hobby":
+      return <Dumbbell {...props} />;
     case "article":
       return <FileText {...props} />;
   }

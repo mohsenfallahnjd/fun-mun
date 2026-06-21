@@ -13,7 +13,7 @@ const APP_BACKGROUND_DARK = "#09090b";
 
 const APP_NAME = "Fun Mun";
 const APP_TITLE = "Fun Mun — Leisure Time";
-const APP_DESCRIPTION = "Bookmark books, movies, series, podcasts and places for your free time.";
+const APP_DESCRIPTION = "Bookmark books, movies, series, podcasts and hobbies for your free time.";
 
 export const metadata: Metadata = {
   applicationName: APP_NAME,

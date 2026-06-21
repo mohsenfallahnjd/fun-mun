@@ -90,7 +90,7 @@ const SEARCH_PLACEHOLDER: Record<ExploreLeisureType, string> = {
   movie: "Search movies…",
   series: "Search TV series…",
   game: "Search games…",
-  place: "Search places and destinations…",
+  hobby: "Search hobbies and activities…",
 };
 
 export function ExploreCategoryPage() {
