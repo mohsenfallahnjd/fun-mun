@@ -20,6 +20,7 @@ export async function GET(request: Request) {
         title: item.title,
         originalTitle: item.originalTitle,
         subtitle: item.subtitle,
+        imageUrl: item.imageUrl,
         notes: item.notes,
         status: item.status,
         year: item.year,
